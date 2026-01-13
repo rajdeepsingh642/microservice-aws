@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # Frontend Applications
+  buyer-app:
+    build:
+      context: ./frontend/buyer-app
+      dockerfile: Dockerfile
+    container_name: buyer-app
+    restart: unless-stopped
+    environment:
+      REACT_APP_API_URL: http://host.docker.internal:3000
+      REACT_APP_ENV: development
+    ports:
+      - "3100:3000"
+    volumes:
+      - ./frontend/buyer-app:/app
+      - /app/node_modules
+    networks:
+      - ecommerce-network
+
+  seller-app:
+    build:
+      context: ./frontend/seller-app
+      dockerfile: Dockerfile
+    container_name: seller-app
+    restart: unless-stopped
+    environment:
+      REACT_APP_API_URL: http://host.docker.internal:3000
+      REACT_APP_ENV: development
+    ports:
+      - "3101:3000"
+    volumes:
+      - ./frontend/seller-app:/app
+      - /app/node_modules
+    networks:
+      - ecommerce-network
+
+  admin-app:
+    build:
+      context: ./frontend/admin-app
+      dockerfile: Dockerfile
+    container_name: admin-app
+    restart: unless-stopped
+    environment:
+      REACT_APP_API_URL: http://host.docker.internal:3000
+      REACT_APP_ENV: development
+    ports:
+      - "3102:3000"
+    volumes:
+      - ./frontend/admin-app:/app
+      - /app/node_modules
+    networks:
+      - ecommerce-network
+
+networks:
+  ecommerce-network:
+    driver: bridge

@@ -1,0 +1,44 @@
+{
+  "name": "ecommerce-marketplace",
+  "version": "1.0.0",
+  "description": "Amazon-like e-commerce marketplace system",
+  "main": "index.js",
+  "scripts": {
+    "dev": "docker-compose up -d",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "start": "docker-compose up",
+    "stop": "docker-compose down",
+    "clean": "docker-compose down -v",
+    "logs": "docker-compose logs -f",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint"
+  },
+  "keywords": [
+    "ecommerce",
+    "marketplace",
+    "microservices",
+    "nodejs",
+    "react",
+    "docker",
+    "kubernetes",
+    "aws"
+  ],
+  "author": "E-commerce Marketplace Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "prettier": "^3.1.1"
+  },
+  "workspaces": [
+    "backend/*",
+    "frontend/*",
+    "shared/*"
+  ]
+}
