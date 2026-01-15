@@ -48,6 +48,7 @@ const Layout = ({ children }) => {
 
   const handleLogout = () => {
     handleMenuClose();
+    localStorage.removeItem('token');
     navigate('/login');
   };
 

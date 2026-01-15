@@ -48,6 +48,8 @@ const Login = () => {
         };
         
         const mockToken = 'mock-admin-jwt-token';
+
+        localStorage.setItem('token', mockToken);
         
         dispatch({
           type: 'auth/login',

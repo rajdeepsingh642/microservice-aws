@@ -1,5 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { persistStore } from 'redux-persist';
 import authReducer from './slices/authSlice';
 
 const rootReducer = {
@@ -9,6 +8,5 @@ const rootReducer = {
 export const store = configureStore({
   reducer: rootReducer,
   devTools: process.env.NODE_ENV !== 'production',
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware()
 });
-
-export const persistor = persistStore(store);
