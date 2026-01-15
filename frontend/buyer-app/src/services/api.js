@@ -1,14 +1,6 @@
 import axios from 'axios';
 
-const RAW_API_URL = process.env.REACT_APP_API_URL;
-
-const API_BASE_URL = (() => {
-  if (!RAW_API_URL) return '/api';
-  const trimmed = String(RAW_API_URL).replace(/\/+$/, '');
-  if (trimmed === '/api') return trimmed;
-  if (trimmed.endsWith('/api')) return trimmed;
-  return `${trimmed}/api`;
-})();
+const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
 // Create axios instance
 const api = axios.create({
@@ -84,9 +76,9 @@ export const authAPI = {
 
 // Products API
 export const productsAPI = {
-  getProducts: (params) => api.get('/products', { params }),
-  getProduct: (id) => api.get(`/products/${id}`),
-  getCategories: () => api.get('/categories'),
+  getProducts: (params) => api.get('/api/products', { params }),
+  getProduct: (id) => api.get(`/api/products/${id}`),
+  getCategories: () => api.get('/api/categories'),
   searchProducts: (params) => api.get('/search/products', { params }),
   getSearchSuggestions: (query) => api.get('/search/suggestions', { params: { q: query } }),
   getTrendingSearches: () => api.get('/search/trending'),

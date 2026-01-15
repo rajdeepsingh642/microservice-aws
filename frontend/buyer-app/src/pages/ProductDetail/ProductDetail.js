@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -159,10 +159,10 @@ const ProductDetail = () => {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
-        <Link component={RouterLink} to="/" color="inherit">
+        <Link to="/" color="inherit">
           Home
         </Link>
-        <Link component={RouterLink} to="/products" color="inherit">
+        <Link to="/products" color="inherit">
           Products
         </Link>
         <Typography color="text.primary">{product.name}</Typography>

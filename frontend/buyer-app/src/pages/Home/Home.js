@@ -12,6 +12,7 @@ import {
   IconButton,
   Avatar,
   Paper,
+  Alert,
   Skeleton,
   LinearProgress,
   Badge,
@@ -48,6 +49,7 @@ const Home = () => {
   
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [apiWarning, setApiWarning] = useState('');
   const [categories, setCategories] = useState([]);
   const [deals, setDeals] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -58,16 +60,11 @@ const Home = () => {
     const loadData = async () => {
       try {
         setLoading(true);
+        setApiWarning('');
         
         // Fetch products from API
         const productsResponse = await productsAPI.getProducts();
-        const rawProducts =
-          productsResponse?.data?.products ||
-          productsResponse?.data?.data ||
-          productsResponse?.data?.items ||
-          [];
-
-        const enhancedProducts = (Array.isArray(rawProducts) ? rawProducts : []).map(product => ({
+        const enhancedProducts = productsResponse.data.data.map(product => ({
           ...product,
           discount: Math.random() > 0.5 ? Math.floor(Math.random() * 50) + 10 : 0,
           badge: Math.random() > 0.7 ? 'Bestseller' : Math.random() > 0.5 ? 'Hot Deal' : null,
@@ -149,7 +146,27 @@ const Home = () => {
 
         setLoading(false);
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.warn('Error loading data:', error);
+        setApiWarning('Backend API not responding. Showing demo products for now.');
+        try {
+          const enhancedMockProducts = (mockProducts || []).map(product => ({
+            ...product,
+            discount: product.discount || 0,
+            badge: product.badge || null,
+            rating: product.rating || 4.5,
+            reviews: product.reviews || 100,
+            delivery: product.delivery || 'Free Delivery',
+            seller: product.seller || {
+              name: 'Mock Seller',
+              rating: 4.5,
+              location: 'India'
+            }
+          }));
+          setProducts(enhancedMockProducts);
+          setFeaturedProducts(enhancedMockProducts.slice(0, 8));
+        } catch (e) {
+          // ignore secondary failure
+        }
         setLoading(false);
       }
     };
@@ -507,15 +524,15 @@ const Home = () => {
         </Typography>
       </Box>
 
+      {apiWarning && (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          {apiWarning}
+        </Alert>
+      )}
+
       <Typography variant="h4" gutterBottom>
         Featured Products ({products?.length || 0})
       </Typography>
-
-      {/* Test: Show basic content first */}
-      <Box sx={{ p: 2, bgcolor: 'grey.100', mb: 2, borderRadius: 1 }}>
-        <Typography>Debug: Products count = {products?.length || 0}</Typography>
-        <Typography>Debug: First product = {products?.[0]?.name || 'None'}</Typography>
-      </Box>
 
       <Grid container spacing={3}>
         {products?.map((product) => (

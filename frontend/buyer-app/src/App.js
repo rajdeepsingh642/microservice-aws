@@ -1,6 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
@@ -21,19 +20,19 @@ import SearchPage from './pages/Search/Search';
 
 function App() {
   return (
-    <Layout>
-      <Routes>
+    <Routes>
+      <Route path="/" element={<Layout />}>
         {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route index element={<Home />} />
+        <Route path="products" element={<Products />} />
+        <Route path="product/:id" element={<ProductDetail />} />
+        <Route path="search" element={<SearchPage />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
 
         {/* Protected Routes */}
         <Route
-          path="/cart"
+          path="cart"
           element={
             <ProtectedRoute>
               <Cart />
@@ -41,7 +40,7 @@ function App() {
           }
         />
         <Route
-          path="/checkout"
+          path="checkout"
           element={
             <ProtectedRoute>
               <Checkout />
@@ -49,7 +48,7 @@ function App() {
           }
         />
         <Route
-          path="/orders"
+          path="orders"
           element={
             <ProtectedRoute>
               <Orders />
@@ -57,7 +56,7 @@ function App() {
           }
         />
         <Route
-          path="/order/:id"
+          path="order/:id"
           element={
             <ProtectedRoute>
               <OrderDetail />
@@ -65,7 +64,7 @@ function App() {
           }
         />
         <Route
-          path="/wishlist"
+          path="wishlist"
           element={
             <ProtectedRoute>
               <Wishlist />
@@ -73,7 +72,7 @@ function App() {
           }
         />
         <Route
-          path="/profile"
+          path="profile"
           element={
             <ProtectedRoute>
               <Profile />
@@ -83,8 +82,8 @@ function App() {
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Layout>
+      </Route>
+    </Routes>
   );
 }
 
