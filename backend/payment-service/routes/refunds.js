@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const refundController = require('../controllers/refundController');
-const { authenticateToken, authorizeRoles } = require('../../../shared/middleware/auth');
+const { authenticateToken, authorizeRoles } = require('/app/shared/middleware/auth');
 
 // All refund routes require authentication
 router.use(authenticateToken);

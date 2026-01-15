@@ -1,6 +1,6 @@
-const { Product } = require('../../../shared/models');
+const { Product } = require('/app/shared/models');
 const productService = require('../services/productService');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class ProductController {
   async getProducts(req, res) {
@@ -45,6 +45,127 @@ class ProductController {
         .exec();
 
       const total = await Product.countDocuments(filters);
+
+      // If no products in database, return mock data for demonstration
+      if (products.length === 0 && total === 0) {
+        const mockProducts = [
+          {
+            _id: 'mock1',
+            name: "Wireless Bluetooth Headphones",
+            description: "Premium noise-cancelling wireless headphones with 30-hour battery life",
+            price: 199.99,
+            category: "Electronics",
+            stock: 100,
+            images: [{ url: "https://picsum.photos/seed/headphones/300/200.jpg" }],
+            sellerId: { firstName: "John", lastName: "Doe", email: "john@example.com" },
+            status: "active",
+            ratings: { average: 4.5, count: 128 },
+            createdAt: new Date()
+          },
+          {
+            _id: 'mock2',
+            name: "Smart Watch Pro",
+            description: "Advanced fitness tracking smartwatch with heart rate monitor",
+            price: 299.99,
+            category: "Electronics",
+            stock: 75,
+            images: [{ url: "https://picsum.photos/seed/smartwatch/300/200.jpg" }],
+            sellerId: { firstName: "Jane", lastName: "Smith", email: "jane@example.com" },
+            status: "active",
+            ratings: { average: 4.2, count: 89 },
+            createdAt: new Date()
+          },
+          {
+            _id: 'mock3',
+            name: "Organic Cotton T-Shirt",
+            description: "Comfortable and sustainable organic cotton t-shirt",
+            price: 29.99,
+            category: "Clothing",
+            stock: 200,
+            images: [{ url: "https://picsum.photos/seed/tshirt/300/200.jpg" }],
+            sellerId: { firstName: "Mike", lastName: "Johnson", email: "mike@example.com" },
+            status: "active",
+            ratings: { average: 4.0, count: 45 },
+            createdAt: new Date()
+          },
+          {
+            _id: 'mock4',
+            name: "Yoga Mat Premium",
+            description: "Non-slip eco-friendly yoga mat with carrying strap",
+            price: 49.99,
+            category: "Sports",
+            stock: 150,
+            images: [{ url: "https://picsum.photos/seed/yogamat/300/200.jpg" }],
+            sellerId: { firstName: "Sarah", lastName: "Williams", email: "sarah@example.com" },
+            status: "active",
+            ratings: { average: 4.7, count: 203 },
+            createdAt: new Date()
+          },
+          {
+            _id: 'mock5',
+            name: "Coffee Maker Deluxe",
+            description: "Programmable coffee maker with thermal carafe",
+            price: 89.99,
+            category: "Home",
+            stock: 60,
+            images: [{ url: "https://picsum.photos/seed/coffee/300/200.jpg" }],
+            sellerId: { firstName: "David", lastName: "Brown", email: "david@example.com" },
+            status: "active",
+            ratings: { average: 4.3, count: 156 },
+            createdAt: new Date()
+          },
+          {
+            _id: 'mock6',
+            name: "Running Shoes",
+            description: "Lightweight breathable running shoes for all terrains",
+            price: 129.99,
+            oldPrice: 159.99,
+            category: "Sports",
+            stock: 80,
+            images: [{ url: "https://picsum.photos/seed/shoes/300/200.jpg" }],
+            sellerId: { firstName: "Lisa", lastName: "Davis", email: "lisa@example.com" },
+            status: "active",
+            ratings: { average: 4.6, count: 92 },
+            createdAt: new Date()
+          },
+          {
+            _id: 'mock7',
+            name: "Laptop Backpack",
+            description: "Water-resistant backpack with laptop compartment and USB charging",
+            price: 59.99,
+            category: "Accessories",
+            stock: 120,
+            images: [{ url: "https://picsum.photos/seed/backpack/300/200.jpg" }],
+            sellerId: { firstName: "Tom", lastName: "Miller", email: "tom@example.com" },
+            status: "active",
+            ratings: { average: 4.4, count: 67 },
+            createdAt: new Date()
+          },
+          {
+            _id: 'mock8',
+            name: "Wireless Mouse",
+            description: "Ergonomic wireless mouse with precision tracking",
+            price: 34.99,
+            category: "Electronics",
+            stock: 180,
+            images: [{ url: "https://picsum.photos/seed/mouse/300/200.jpg" }],
+            sellerId: { firstName: "Emma", lastName: "Wilson", email: "emma@example.com" },
+            status: "active",
+            ratings: { average: 4.1, count: 134 },
+            createdAt: new Date()
+          }
+        ];
+
+        return res.json({
+          products: mockProducts,
+          pagination: {
+            page: parseInt(page),
+            limit: parseInt(limit),
+            total: mockProducts.length,
+            pages: Math.ceil(mockProducts.length / limit)
+          }
+        });
+      }
 
       res.json({
         products,

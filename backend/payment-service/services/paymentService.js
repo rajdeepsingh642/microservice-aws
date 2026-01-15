@@ -1,8 +1,8 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const amqp = require('amqplib');
 const { v4: uuidv4 } = require('uuid');
-const database = require('../../../shared/utils/database');
-const logger = require('../../../shared/utils/logger');
+const database = require('/app/shared/utils/database');
+const logger = require('/app/shared/utils/logger');
 
 class PaymentService {
   constructor() {

@@ -1,7 +1,7 @@
 const axios = require('axios');
 const amqp = require('amqplib');
 const { v4: uuidv4 } = require('uuid');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class OrderService {
   constructor() {
@@ -289,7 +289,7 @@ class OrderService {
 
   async getOrderStats(userId, role = 'buyer') {
     try {
-      const database = require('../../../shared/utils/database');
+      const database = require('/app/shared/utils/database');
       const pool = database.getPostgresPool();
 
       let query;
@@ -337,7 +337,7 @@ class OrderService {
 
   async getRevenueAnalytics(sellerId, period = '30d') {
     try {
-      const database = require('../../../shared/utils/database');
+      const database = require('/app/shared/utils/database');
       const pool = database.getPostgresPool();
 
       let dateFilter;

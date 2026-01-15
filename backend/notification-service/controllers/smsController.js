@@ -1,5 +1,5 @@
 const notificationService = require('../services/notificationService');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class SmsController {
   async sendSms(req, res) {

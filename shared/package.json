@@ -1,0 +1,16 @@
+{
+  "name": "shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and models for e-commerce marketplace",
+  "main": "index.js",
+  
+  "dependencies": {
+    "mongoose": "^7.6.3",
+    "pg": "^8.11.3",
+    "redis": "^4.6.11",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "express-validator": "^7.0.1",
+    "winston": "^3.11.0"
+  }
+}

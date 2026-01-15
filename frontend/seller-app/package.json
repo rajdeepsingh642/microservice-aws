@@ -2,6 +2,7 @@
   "name": "seller-app",
   "version": "1.0.0",
   "description": "Seller application for e-commerce marketplace",
+  "proxy": "http://localhost:3000",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
@@ -53,6 +54,5 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.191"
-  },
-  "proxy": "http://localhost:3000"
+  }
 }

@@ -1,5 +1,5 @@
 const searchService = require('../services/searchService');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class AnalyticsController {
   async getSearchTrends(req, res) {

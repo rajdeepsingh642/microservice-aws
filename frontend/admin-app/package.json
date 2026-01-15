@@ -54,6 +54,5 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.191"
-  },
-  "proxy": "http://localhost:3000"
+  }
 }

@@ -1,5 +1,5 @@
 const axios = require('axios');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class ProxyService {
   constructor() {
@@ -218,7 +218,7 @@ class ProxyService {
   // Request caching
   async cacheRequest(cacheKey, requestFn, ttl = 300) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (!redis) {
         return await requestFn();

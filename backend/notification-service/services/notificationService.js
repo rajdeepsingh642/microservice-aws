@@ -2,7 +2,7 @@ const amqp = require('amqplib');
 const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 const admin = require('firebase-admin');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class NotificationService {
   constructor() {
@@ -197,7 +197,7 @@ class NotificationService {
 
   async storeInAppNotification(notification) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (!redis) return;
 
@@ -274,7 +274,7 @@ class NotificationService {
       }
 
       // Get user's FCM tokens
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       const tokens = await redis.smembers(`fcm_tokens:${pushData.userId}`);
 
       if (tokens.length === 0) {
@@ -300,7 +300,7 @@ class NotificationService {
 
   async getUserNotifications(userId, options = {}) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (!redis) {
         return { notifications: [], pagination: { page: 1, limit: 20, total: 0, pages: 0 } };
@@ -347,7 +347,7 @@ class NotificationService {
 
   async getUnreadCount(userId) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (!redis) return 0;
 
@@ -361,7 +361,7 @@ class NotificationService {
 
   async markAsRead(notificationId, userId) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (!redis) return;
 
@@ -392,7 +392,7 @@ class NotificationService {
 
   async markAllAsRead(userId) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (!redis) return;
 
@@ -420,7 +420,7 @@ class NotificationService {
 
   async deleteNotification(notificationId, userId) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (!redis) return;
 

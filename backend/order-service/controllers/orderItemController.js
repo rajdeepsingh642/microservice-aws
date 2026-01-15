@@ -1,5 +1,5 @@
-const database = require('../../../shared/utils/database');
-const logger = require('../../../shared/utils/logger');
+const database = require('/app/shared/utils/database');
+const logger = require('/app/shared/utils/logger');
 
 class OrderItemController {
   async getOrderItemsByOrderId(req, res) {

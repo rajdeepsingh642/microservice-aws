@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
-const { Review, Product } = require('../../../shared/models');
+const { Review, Product } = require('/app/shared/models');
 const reviewService = require('../services/reviewService');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class ReviewController {
   async getProductReviews(req, res) {
@@ -286,7 +286,7 @@ class ReviewController {
 
       // Check if user has already voted
       const voteKey = `review_vote_${id}_${userId}`;
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         const existingVote = await redis.get(voteKey);
@@ -333,7 +333,7 @@ class ReviewController {
 
       // Check if user has already voted
       const voteKey = `review_vote_${id}_${userId}`;
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         const existingVote = await redis.get(voteKey);

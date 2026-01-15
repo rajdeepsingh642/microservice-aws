@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const notificationService = require('../services/notificationService');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class NotificationController {
   async getMyNotifications(req, res) {

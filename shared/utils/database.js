@@ -118,4 +118,6 @@ class DatabaseConnection {
   }
 }
 
+// database.js
+
 module.exports = new DatabaseConnection();

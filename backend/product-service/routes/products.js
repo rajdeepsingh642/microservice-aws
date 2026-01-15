@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
-const { authenticateToken, authorizeRoles } = require('../../../shared/middleware/auth');
+const { authenticateToken, authorizeRoles } = require('/app/shared/middleware/auth');
 const {
   validateProductCreation,
   validateProductUpdate,
   validateMongoId
-} = require('../../../shared/middleware/validation');
+} = require('/app/shared/middleware/validation');
 
 // Public routes
 router.get('/', productController.getProducts);

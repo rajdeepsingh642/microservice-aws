@@ -6,9 +6,9 @@ const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 
-const database = require('../../shared/utils/database');
-const logger = require('../../shared/utils/logger');
-const { Product } = require('../../shared/models');
+const database = require('/app/shared/utils/database');
+const logger = require('/app/shared/utils/logger');
+const { Product } = require('/app/shared/models');
 
 // Import routes
 const productRoutes = require('./routes/products');

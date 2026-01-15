@@ -1,7 +1,7 @@
 const { Client } = require('@elastic/elasticsearch');
 const axios = require('axios');
 const amqp = require('amqplib');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class SearchService {
   constructor() {
@@ -448,7 +448,7 @@ class SearchService {
 
   async getTrendingSearches(limit) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         const trending = await redis.zrevrange('trending_searches', 0, limit - 1, 'WITHSCORES');
@@ -580,7 +580,7 @@ class SearchService {
       });
 
       // Update trending searches in Redis
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       if (redis && query) {
         await redis.zincrby('trending_searches', 1, query.toLowerCase());
         // Keep only top 100 trending searches

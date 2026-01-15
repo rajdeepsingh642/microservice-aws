@@ -1,6 +1,6 @@
-const { Product } = require('../../../shared/models');
+const { Product } = require('/app/shared/models');
 const productService = require('../services/productService');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class InventoryController {
   async getMyInventory(req, res) {

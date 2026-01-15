@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
-const database = require('../../../shared/utils/database');
+const database = require('/app/shared/utils/database');
 const orderService = require('../services/orderService');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class OrderController {
   async getMyOrders(req, res) {

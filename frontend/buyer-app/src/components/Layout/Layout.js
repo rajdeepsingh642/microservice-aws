@@ -169,6 +169,21 @@ const Layout = () => {
         >
           {drawer}
         </Drawer>
+        
+        {/* Permanent Desktop Drawer */}
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+            },
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
       </Box>
 
       {/* Main Content */}

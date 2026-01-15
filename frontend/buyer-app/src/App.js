@@ -17,11 +17,9 @@ import Profile from './pages/Profile/Profile';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import Wishlist from './pages/Wishlist/Wishlist';
-import Search from './pages/Search/Search';
+import SearchPage from './pages/Search/Search';
 
 function App() {
-  const { isAuthenticated } = useSelector((state) => state.auth);
-
   return (
     <Layout>
       <Routes>
@@ -29,7 +27,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
         <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/search" element={<Search />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
@@ -59,18 +57,10 @@ function App() {
           }
         />
         <Route
-          path="/orders/:id"
+          path="/order/:id"
           element={
             <ProtectedRoute>
               <OrderDetail />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
             </ProtectedRoute>
           }
         />
@@ -79,6 +69,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Wishlist />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />

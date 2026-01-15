@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
   Menu,
@@ -8,9 +8,9 @@ import {
   ListItemText,
   Avatar,
   Box,
-  Divider,
   IconButton,
   Typography,
+  Divider,
 } from '@mui/material';
 import {
   Person,
@@ -18,7 +18,6 @@ import {
   Logout,
   AccountCircle,
 } from '@mui/icons-material';
-import { logout } from '../../store/slices/authSlice';
 
 const UserMenu = ({ user, open, onOpen, onClose }) => {
   const dispatch = useDispatch();
@@ -41,7 +40,7 @@ const UserMenu = ({ user, open, onOpen, onClose }) => {
   };
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch({ type: 'LOGOUT' });
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     navigate('/login');

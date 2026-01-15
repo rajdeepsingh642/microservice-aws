@@ -10,6 +10,14 @@ const wishlistSlice = createSlice({
   name: 'wishlist',
   initialState,
   reducers: {
+    addToWishlist: (state, action) => {
+      const exists = state.items.find(
+        (item) => item.productId === action.payload.productId
+      );
+      if (!exists) {
+        state.items.push(action.payload);
+      }
+    },
     addToWishlistStart: (state) => {
       state.isLoading = true;
       state.error = null;
@@ -46,6 +54,7 @@ const wishlistSlice = createSlice({
 });
 
 export const {
+  addToWishlist,
   addToWishlistStart,
   addToWishlistSuccess,
   addToWishlistFailure,

@@ -1,6 +1,6 @@
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class AuthService {
   constructor() {
@@ -33,10 +33,11 @@ class AuthService {
   async createUser(userData) {
     try {
       // This would typically call a user service to create the user
+      const requireEmailVerification = String(process.env.REQUIRE_EMAIL_VERIFICATION).toLowerCase() === 'true';
       const newUser = {
         _id: uuidv4(),
         ...userData,
-        isActive: false, // Require email verification
+        isActive: !requireEmailVerification, // Require email verification
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -129,7 +130,7 @@ class AuthService {
 
   async storeRefreshToken(userId, refreshToken) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         await redis.setex(`refresh_token:${userId}`, 7 * 24 * 60 * 60, refreshToken); // 7 days
@@ -141,7 +142,7 @@ class AuthService {
 
   async getRefreshToken(userId) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         return await redis.get(`refresh_token:${userId}`);
@@ -155,7 +156,7 @@ class AuthService {
 
   async removeRefreshToken(userId) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         await redis.del(`refresh_token:${userId}`);
@@ -167,7 +168,7 @@ class AuthService {
 
   async removeAllRefreshTokens(userId) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         await redis.del(`refresh_token:${userId}`);
@@ -179,7 +180,7 @@ class AuthService {
 
   async storePasswordResetToken(userId, token) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         await redis.setex(`password_reset:${token}`, 60 * 60, userId); // 1 hour
@@ -191,7 +192,7 @@ class AuthService {
 
   async getPasswordResetToken(token) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         return await redis.get(`password_reset:${token}`);
@@ -205,7 +206,7 @@ class AuthService {
 
   async removePasswordResetToken(token) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         await redis.del(`password_reset:${token}`);
@@ -217,7 +218,7 @@ class AuthService {
 
   async storeEmailVerificationToken(userId, token) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         await redis.setex(`email_verification:${token}`, 24 * 60 * 60, userId); // 24 hours
@@ -229,7 +230,7 @@ class AuthService {
 
   async getEmailVerificationToken(token) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         return await redis.get(`email_verification:${token}`);
@@ -243,7 +244,7 @@ class AuthService {
 
   async removeEmailVerificationToken(token) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         await redis.del(`email_verification:${token}`);
@@ -255,6 +256,11 @@ class AuthService {
 
   async sendVerificationEmail(user) {
     try {
+      const requireEmailVerification = String(process.env.REQUIRE_EMAIL_VERIFICATION).toLowerCase() === 'true';
+      if (!requireEmailVerification) {
+        return;
+      }
+
       const token = uuidv4();
       await this.storeEmailVerificationToken(user._id, token);
 
@@ -323,7 +329,7 @@ class AuthService {
   // Mock database methods (in real implementation, these would be actual database calls)
   async getMockUsers() {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         const users = await redis.get('mock_users');
@@ -338,7 +344,7 @@ class AuthService {
 
   async storeMockUsers(users) {
     try {
-      const redis = require('../../../shared/utils/database').getRedisClient();
+      const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
         await redis.set('mock_users', JSON.stringify(users));

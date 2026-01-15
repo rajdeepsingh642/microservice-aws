@@ -4,27 +4,28 @@
   "description": "Buyer application for e-commerce marketplace",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/lab": "^5.0.0-alpha.119",
+    "@mui/material": "^5.11.0",
+    "@reduxjs/toolkit": "^1.9.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
+    "axios": "^1.6.2",
+    "date-fns": "^2.29.3",
+    "http-proxy-middleware": "^3.0.5",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "react-router-dom": "^6.8.0",
-    "axios": "^1.6.2",
-    "@reduxjs/toolkit": "^1.9.1",
-    "react-redux": "^8.0.5",
-    "redux-persist": "^6.0.0",
-    "@mui/material": "^5.11.0",
-    "@mui/icons-material": "^5.11.0",
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@mui/lab": "^5.0.0-alpha.119",
     "react-hook-form": "^7.43.1",
-    "react-query": "^3.39.3",
     "react-hot-toast": "^2.4.0",
-    "lodash": "^4.17.21",
-    "date-fns": "^2.29.3"
+    "react-query": "^3.39.3",
+    "react-redux": "^8.0.5",
+    "react-router-dom": "^6.8.0",
+    "react-scripts": "5.0.1",
+    "redux-persist": "^6.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -52,6 +53,5 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.191"
-  },
-  "proxy": "http://localhost:3000"
+  }
 }

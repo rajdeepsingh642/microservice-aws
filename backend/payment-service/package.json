@@ -28,7 +28,8 @@
     "morgan": "^1.10.0",
     "uuid": "^9.0.1",
     "axios": "^1.6.2",
-    "stripe": "^14.9.0"
+    "stripe": "^14.9.0",
+    "module-alias": "^2.2.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",
@@ -36,6 +37,9 @@
     "supertest": "^6.3.3",
     "eslint": "^8.56.0",
     "eslint-config-standard": "^17.1.0"
+  },
+  "_moduleAliases": {
+    "/app/shared": "shared"
   },
   "keywords": [
     "ecommerce",

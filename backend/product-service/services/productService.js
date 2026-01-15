@@ -1,7 +1,7 @@
 const { Client } = require('@elastic/elasticsearch');
 const amqp = require('amqplib');
-const logger = require('../../../shared/utils/logger');
-const { Product } = require('../../../shared/models');
+const logger = require('/app/shared/utils/logger');
+const { Product } = require('/app/shared/models');
 
 class ProductService {
   constructor() {

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .product { border: 1px solid #ddd; margin: 10px; padding: 10px; }
+        img { width: 100px; height: 100px; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <h1>🛒 E-commerce API Test</h1>
+    <div id="products"></div>
+
+    <script>
+        async function loadProducts() {
+            try {
+                const response = await fetch('http://localhost:3007/api/products');
+                const data = await response.json();
+                
+                const container = document.getElementById('products');
+                container.innerHTML = '<h2>Products Loaded Successfully! 🎉</h2>';
+                
+                data.data.forEach(product => {
+                    const div = document.createElement('div');
+                    div.className = 'product';
+                    div.innerHTML = `
+                        <h3>${product.name}</h3>
+                        <img src="${product.images[0].url}" alt="${product.name}">
+                        <p><strong>Price:</strong> ₹${Math.floor(product.price * 83)}</p>
+                        <p><strong>Discount:</strong> ${product.discount}% OFF</p>
+                        <p><strong>Seller:</strong> ${product.seller.name}</p>
+                        <p><strong>Rating:</strong> ${product.rating} ⭐</p>
+                        <p><strong>Delivery:</strong> ${product.delivery}</p>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                document.getElementById('products').innerHTML = `<h2>Error: ${error.message}</h2>`;
+            }
+        }
+        
+        loadProducts();
+    </script>
+</body>
+</html>

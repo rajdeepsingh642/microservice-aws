@@ -1,6 +1,6 @@
-const database = require('../../../shared/utils/database');
+const database = require('/app/shared/utils/database');
 const paymentService = require('../services/paymentService');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class RefundController {
   async createRefund(req, res) {

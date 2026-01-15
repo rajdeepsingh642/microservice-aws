@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
-const { authenticateToken, generateTokens, verifyRefreshToken } = require('../../../shared/middleware/auth');
+const { authenticateToken, generateTokens, verifyRefreshToken } = require('/app/shared/middleware/auth');
 const authService = require('../services/authService');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class AuthController {
   async register(req, res) {
@@ -39,7 +39,9 @@ class AuthController {
       await authService.storeRefreshToken(user._id, tokens.refreshToken);
 
       // Send verification email
-      await authService.sendVerificationEmail(user);
+      if (!user.isActive) {
+        await authService.sendVerificationEmail(user);
+      }
 
       res.status(201).json({
         message: 'User registered successfully',
@@ -272,7 +274,14 @@ class AuthController {
 
   async verifyEmail(req, res) {
     try {
-      const { token } = req.params;
+      const token = req.params.token || req.query.token;
+
+      if (!token) {
+        return res.status(400).json({
+          error: 'Bad Request',
+          message: 'Verification token is required'
+        });
+      }
 
       // Verify email token
       const userId = await authService.getEmailVerificationToken(token);

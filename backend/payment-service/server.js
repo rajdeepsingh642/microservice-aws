@@ -1,3 +1,4 @@
+require('module-alias/register');
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -6,8 +7,8 @@ const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 
-const database = require('../../shared/utils/database');
-const logger = require('../../shared/utils/logger');
+const database = require('/app/shared/utils/database');
+const logger = require('/app/shared/utils/logger');
 
 // Import routes
 const paymentRoutes = require('./routes/payments');

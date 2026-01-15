@@ -7,12 +7,11 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const database = require('../../shared/utils/database');
-const logger = require('../../shared/utils/logger');
-
-// Import routes
-const authRoutes = require('./routes/auth');
+const database = require('/app/shared/utils/database');
+const logger = require('/app/shared/utils/logger');
+const { Product, User, Review, Cart, Wishlist } = require('/app/shared/models');
 const proxyRoutes = require('./routes/proxy');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;

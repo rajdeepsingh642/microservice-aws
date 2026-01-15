@@ -6,18 +6,16 @@ import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 
 // Pages
-import Dashboard from './pages/Dashboard/Dashboard';
-import Users from './pages/Users/Users';
-import Products from './pages/Products/Products';
-import Orders from './pages/Orders/Orders';
-import Sellers from './pages/Sellers/Sellers';
-import Analytics from './pages/Analytics/Analytics';
-import Settings from './pages/Settings/Settings';
-import Login from './pages/Auth/Login';
+import Dashboard from './pages/Dashboard';
+import Users from './pages/Users';
+import Products from './pages/Products';
+import Orders from './pages/Orders';
+import Sellers from './pages/Sellers';
+import Analytics from './pages/Analytics';
+import Settings from './pages/Settings';
+import Login from './pages/Auth';
 
 function App() {
-  const { isAuthenticated } = useSelector((state) => state.auth);
-
   return (
     <Layout>
       <Routes>
@@ -78,6 +76,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Settings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
             </ProtectedRoute>
           }
         />

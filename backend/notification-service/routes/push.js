@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pushController = require('../controllers/pushController');
-const { authenticateToken } = require('../../../shared/middleware/auth');
+const { authenticateToken } = require('/app/shared/middleware/auth');
 
 // Register FCM token
 router.post('/register-token', authenticateToken, pushController.registerFcmToken);

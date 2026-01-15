@@ -1,6 +1,6 @@
-const { Product } = require('../../../shared/models');
+const { Product } = require('/app/shared/models');
 const reviewService = require('../services/reviewService');
-const logger = require('../../../shared/utils/logger');
+const logger = require('/app/shared/utils/logger');
 
 class RatingController {
   async getProductRating(req, res) {
@@ -19,7 +19,7 @@ class RatingController {
       }
 
       // Get detailed rating distribution
-      const ratingDistribution = await require('../../../shared/models').Review.aggregate([
+      const ratingDistribution = await require('/app/shared/models').Review.aggregate([
         { $match: { productId: productId, status: 'approved' } },
         {
           $group: {
@@ -102,7 +102,7 @@ class RatingController {
   async getRatingSummary(req, res) {
     try {
       // Get overall platform rating statistics
-      const { Review } = require('../../../shared/models');
+      const { Review } = require('/app/shared/models');
 
       const overallStats = await Review.aggregate([
         { $match: { status: 'approved' } },

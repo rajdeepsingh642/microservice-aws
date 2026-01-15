@@ -6,12 +6,13 @@ const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 
-const database = require('../../shared/utils/database');
-const logger = require('../../shared/utils/logger');
+const database = require('/app/shared/utils/database');
+const logger = require('/app/shared/utils/logger');
 
 // Import routes
 const searchRoutes = require('./routes/search');
 const analyticsRoutes = require('./routes/analytics');
+const dashboardRoutes = require('./routes/dashboard');
 
 const app = express();
 const PORT = process.env.PORT || 3005;
@@ -53,6 +54,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/search', searchRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

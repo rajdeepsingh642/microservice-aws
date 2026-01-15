@@ -1,0 +1,461 @@
+# API Gateway Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: ecommerce
+  labels:
+    app: api-gateway
+    tier: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+        tier: frontend
+    spec:
+      containers:
+      - name: api-gateway
+        image: your-registry/api-gateway:latest
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - configMapRef:
+            name: ecommerce-config
+        - secretRef:
+            name: ecommerce-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway-service
+  namespace: ecommerce
+  labels:
+    app: api-gateway
+spec:
+  selector:
+    app: api-gateway
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+  type: ClusterIP
+---
+# Product Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service
+  namespace: ecommerce
+  labels:
+    app: product-service
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: product-service
+  template:
+    metadata:
+      labels:
+        app: product-service
+        tier: backend
+    spec:
+      containers:
+      - name: product-service
+        image: your-registry/product-service:latest
+        ports:
+        - containerPort: 3001
+        envFrom:
+        - configMapRef:
+            name: ecommerce-config
+        - secretRef:
+            name: ecommerce-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+  namespace: ecommerce
+  labels:
+    app: product-service
+spec:
+  selector:
+    app: product-service
+  ports:
+  - protocol: TCP
+    port: 3001
+    targetPort: 3001
+  type: ClusterIP
+---
+# Order Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: ecommerce
+  labels:
+    app: order-service
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+        tier: backend
+    spec:
+      containers:
+      - name: order-service
+        image: your-registry/order-service:latest
+        ports:
+        - containerPort: 3002
+        envFrom:
+        - configMapRef:
+            name: ecommerce-config
+        - secretRef:
+            name: ecommerce-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3002
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3002
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: ecommerce
+  labels:
+    app: order-service
+spec:
+  selector:
+    app: order-service
+  ports:
+  - protocol: TCP
+    port: 3002
+    targetPort: 3002
+  type: ClusterIP
+---
+# Payment Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: ecommerce
+  labels:
+    app: payment-service
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+        tier: backend
+    spec:
+      containers:
+      - name: payment-service
+        image: your-registry/payment-service:latest
+        ports:
+        - containerPort: 3003
+        envFrom:
+        - configMapRef:
+            name: ecommerce-config
+        - secretRef:
+            name: ecommerce-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3003
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3003
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: ecommerce
+  labels:
+    app: payment-service
+spec:
+  selector:
+    app: payment-service
+  ports:
+  - protocol: TCP
+    port: 3003
+    targetPort: 3003
+  type: ClusterIP
+---
+# Review Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: review-service
+  namespace: ecommerce
+  labels:
+    app: review-service
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: review-service
+  template:
+    metadata:
+      labels:
+        app: review-service
+        tier: backend
+    spec:
+      containers:
+      - name: review-service
+        image: your-registry/review-service:latest
+        ports:
+        - containerPort: 3004
+        envFrom:
+        - configMapRef:
+            name: ecommerce-config
+        - secretRef:
+            name: ecommerce-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3004
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3004
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: review-service
+  namespace: ecommerce
+  labels:
+    app: review-service
+spec:
+  selector:
+    app: review-service
+  ports:
+  - protocol: TCP
+    port: 3004
+    targetPort: 3004
+  type: ClusterIP
+---
+# Search Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search-service
+  namespace: ecommerce
+  labels:
+    app: search-service
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: search-service
+  template:
+    metadata:
+      labels:
+        app: search-service
+        tier: backend
+    spec:
+      containers:
+      - name: search-service
+        image: your-registry/search-service:latest
+        ports:
+        - containerPort: 3005
+        envFrom:
+        - configMapRef:
+            name: ecommerce-config
+        - secretRef:
+            name: ecommerce-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3005
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3005
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: search-service
+  namespace: ecommerce
+  labels:
+    app: search-service
+spec:
+  selector:
+    app: search-service
+  ports:
+  - protocol: TCP
+    port: 3005
+    targetPort: 3005
+  type: ClusterIP
+---
+# Notification Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  namespace: ecommerce
+  labels:
+    app: notification-service
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+        tier: backend
+    spec:
+      containers:
+      - name: notification-service
+        image: your-registry/notification-service:latest
+        ports:
+        - containerPort: 3006
+        envFrom:
+        - configMapRef:
+            name: ecommerce-config
+        - secretRef:
+            name: ecommerce-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3006
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3006
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+  namespace: ecommerce
+  labels:
+    app: notification-service
+spec:
+  selector:
+    app: notification-service
+  ports:
+  - protocol: TCP
+    port: 3006
+    targetPort: 3006
+  type: ClusterIP

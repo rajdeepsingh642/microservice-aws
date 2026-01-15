@@ -13,6 +13,8 @@ services:
     ports:
       - "27017:27017"
     volumes:
+      - ./shared:/app/shared
+      - ./shared/node_modules:/app/shared/node_modules
       - mongodb_data:/data/db
       - ./infrastructure/scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
@@ -29,6 +31,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
+      - ./shared:/app/shared
+      - ./shared/node_modules:/app/shared/node_modules
       - postgres_data:/var/lib/postgresql/data
       - ./infrastructure/scripts/postgres-init.sql:/docker-entrypoint-initdb.d/postgres-init.sql:ro
     networks:
@@ -41,6 +45,8 @@ services:
     ports:
       - "6379:6379"
     volumes:
+      - ./shared:/app/shared
+      - ./shared/node_modules:/app/shared/node_modules
       - redis_data:/data
     networks:
       - ecommerce-network
@@ -56,25 +62,27 @@ services:
       - "5672:5672"
       - "15672:15672"
     volumes:
+      - ./shared:/app/shared
+      - ./shared/node_modules:/app/shared/node_modules
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - ecommerce-network
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
-    container_name: ecommerce-elasticsearch
-    restart: unless-stopped
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
-    networks:
-      - ecommerce-network
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+  #   container_name: ecommerce-elasticsearch
+  #   restart: unless-stopped
+  #   environment:
+  #     - discovery.type=single-node
+  #     - xpack.security.enabled=false
+  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #   ports:
+  #     - "9200:9200"
+  #     - "9300:9300"
+  #   volumes:
+  #     - elasticsearch_data:/usr/share/elasticsearch/data
+  #   networks:
+  #     - ecommerce-network
 
   # Backend Microservices
   api-gateway:
@@ -107,8 +115,9 @@ services:
       - postgres
       - redis
       - rabbitmq
-      - elasticsearch
     volumes:
+      - ./shared:/app/shared
+      - ./shared/node_modules:/app/shared/node_modules
       - ./backend/api-gateway:/app
       - /app/node_modules
     networks:
@@ -119,6 +128,21 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.11.0
+  #   container_name: ecommerce-kibana
+  #   restart: unless-stopped
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #     - SERVER_NAME=ecommerce-kibana
+  #     - SERVER_HOST=0.0.0.0
+  #   ports:
+  #     - "5601:5601"
+  #   depends_on:
+  #     - elasticsearch
+  #   networks:
+  #     - ecommerce-network
 
   product-service:
     build:
@@ -141,8 +165,9 @@ services:
       - mongodb
       - redis
       - rabbitmq
-      - elasticsearch
     volumes:
+      - ./shared:/app/shared
+      - ./shared/node_modules:/app/shared/node_modules
       - ./backend/product-service:/app
       - /app/node_modules
     networks:
@@ -178,6 +203,8 @@ services:
       - redis
       - rabbitmq
     volumes:
+      - ./shared:/app/shared
+      - ./shared/node_modules:/app/shared/node_modules
       - ./backend/order-service:/app
       - /app/node_modules
     networks:
@@ -212,6 +239,8 @@ services:
       - redis
       - rabbitmq
     volumes:
+      - ./shared:/app/shared
+      - ./shared/node_modules:/app/shared/node_modules
       - ./backend/payment-service:/app
       - /app/node_modules
     networks:
@@ -245,6 +274,8 @@ services:
       - redis
       - rabbitmq
     volumes:
+      - ./shared:/app/shared
+      - ./shared/node_modules:/app/shared/node_modules
       - ./backend/review-service:/app
       - /app/node_modules
     networks:
@@ -277,8 +308,9 @@ services:
       - mongodb
       - redis
       - rabbitmq
-      - elasticsearch
     volumes:
+      - ./shared:/app/shared
+      - ./shared/node_modules:/app/shared/node_modules
       - ./backend/search-service:/app
       - /app/node_modules
     networks:
@@ -318,6 +350,8 @@ services:
       - redis
       - rabbitmq
     volumes:
+      - ./shared:/app/shared
+      - ./shared/node_modules:/app/shared/node_modules
       - ./backend/notification-service:/app
       - /app/node_modules
     networks:
@@ -334,7 +368,7 @@ volumes:
   postgres_data:
   redis_data:
   rabbitmq_data:
-  elasticsearch_data:
+  # elasticsearch_data:
 
 networks:
   ecommerce-network:

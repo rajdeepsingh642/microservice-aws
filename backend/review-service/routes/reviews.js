@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const reviewController = require('../controllers/reviewController');
-const { authenticateToken, authorizeRoles } = require('../../../shared/middleware/auth');
+const { authenticateToken, authorizeRoles } = require('/app/shared/middleware/auth');
 const {
   validateReviewCreation,
   validateMongoId
-} = require('../../../shared/middleware/validation');
+} = require('/app/shared/middleware/validation');
 
 // Public routes
 router.get('/product/:productId', validateMongoId('productId'), reviewController.getProductReviews);

@@ -19,6 +19,8 @@
     "@elastic/elasticsearch": "^8.11.0",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
+    "uuid": "^9.0.1",
+    "module-alias": "^2.2.2",
     "cors": "^2.8.5",
     "helmet": "^7.1.0",
     "express-rate-limit": "^7.1.5",
@@ -36,6 +38,9 @@
     "supertest": "^6.3.3",
     "eslint": "^8.56.0",
     "eslint-config-standard": "^17.1.0"
+  },
+  "_moduleAliases": {
+    "/app/shared": "shared"
   },
   "keywords": [
     "ecommerce",

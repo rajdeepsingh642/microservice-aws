@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { createProxyMiddleware } = require('http-proxy-middleware');
-const { authenticateToken } = require('../../../shared/middleware/auth');
+const { authenticateToken } = require('/app/shared/middleware/auth');
 const proxyService = require('../services/proxyService');
 
 // Service configurations
 const services = {
   products: {
-    target: process.env.PRODUCT_SERVICE_URL || 'http://product-service:3001',
+    target: process.env.PRODUCT_SERVICE_URL || 'http://localhost:3001',
     changeOrigin: true,
     pathRewrite: {
       '^/api/products': '/api/products',
@@ -16,7 +16,7 @@ const services = {
     }
   },
   orders: {
-    target: process.env.ORDER_SERVICE_URL || 'http://order-service:3002',
+    target: process.env.ORDER_SERVICE_URL || 'http://localhost:3002',
     changeOrigin: true,
     pathRewrite: {
       '^/api/orders': '/api/orders',
@@ -24,7 +24,7 @@ const services = {
     }
   },
   payments: {
-    target: process.env.PAYMENT_SERVICE_URL || 'http://payment-service:3003',
+    target: process.env.PAYMENT_SERVICE_URL || 'http://localhost:3003',
     changeOrigin: true,
     pathRewrite: {
       '^/api/payments': '/api/payments',
@@ -33,7 +33,7 @@ const services = {
     }
   },
   reviews: {
-    target: process.env.REVIEW_SERVICE_URL || 'http://review-service:3004',
+    target: process.env.REVIEW_SERVICE_URL || 'http://localhost:3008',
     changeOrigin: true,
     pathRewrite: {
       '^/api/reviews': '/api/reviews',
@@ -41,7 +41,7 @@ const services = {
     }
   },
   search: {
-    target: process.env.SEARCH_SERVICE_URL || 'http://search-service:3005',
+    target: process.env.SEARCH_SERVICE_URL || 'http://localhost:3005',
     changeOrigin: true,
     pathRewrite: {
       '^/api/search': '/api/search',
@@ -49,7 +49,7 @@ const services = {
     }
   },
   notifications: {
-    target: process.env.NOTIFICATION_SERVICE_URL || 'http://notification-service:3006',
+    target: process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:3006',
     changeOrigin: true,
     pathRewrite: {
       '^/api/notifications': '/api/notifications',
@@ -64,6 +64,17 @@ const services = {
 Object.keys(services).forEach(serviceName => {
   const service = services[serviceName];
   
+  // Apply authentication middleware for protected routes
+  const publicPaths = [
+    '/api/products',
+    '/api/search',
+    '/api/ratings'
+  ];
+
+  const isPublicPath = (path) => {
+    return publicPaths.some(publicPath => path.startsWith(publicPath));
+  };
+
   const proxy = createProxyMiddleware({
     target: service.target,
     changeOrigin: service.changeOrigin,
@@ -92,19 +103,13 @@ Object.keys(services).forEach(serviceName => {
     }
   });
 
-  // Apply authentication middleware for protected routes
-  const publicPaths = [
-    '/api/products',
-    '/api/search',
-    '/api/ratings'
-  ];
+  Object.keys(service.pathRewrite).forEach(key => {
+    const nonRegexPath = key.replace('^', '');
+    const routeMatcher = new RegExp(key);
+    const maybeAuth = isPublicPath(nonRegexPath) ? (req, res, next) => next() : authenticateToken;
 
-  const isPublicPath = (path) => {
-    return publicPaths.some(publicPath => path.startsWith(publicPath));
-  };
-
-  router.use(service.pathRewrite[`^/${Object.keys(service.pathRewrite)[0]}`], 
-    isPublicPath ? proxy : authenticateToken, proxy);
+    router.use(routeMatcher, maybeAuth, proxy);
+  });
 });
 
 // Health check for all services

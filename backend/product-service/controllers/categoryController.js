@@ -1,5 +1,5 @@
-const { Product } = require('../../../shared/models');
-const logger = require('../../../shared/utils/logger');
+const { Product } = require('/app/shared/models');
+const logger = require('/app/shared/utils/logger');
 
 class CategoryController {
   async getCategories(req, res) {

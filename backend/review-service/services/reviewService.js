@@ -1,7 +1,7 @@
 const axios = require('axios');
 const amqp = require('amqplib');
-const { Review, Product } = require('../../../shared/models');
-const logger = require('../../../shared/utils/logger');
+const { Review, Product } = require('/app/shared/models');
+const logger = require('/app/shared/utils/logger');
 
 class ReviewService {
   constructor() {

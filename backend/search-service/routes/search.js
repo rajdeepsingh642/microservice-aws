@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const searchController = require('../controllers/searchController');
-const { validateSearchQuery } = require('../../../shared/middleware/validation');
+const { validateSearchQuery } = require('/app/shared/middleware/validation');
 
 // Public routes
 router.get('/products', validateSearchQuery, searchController.searchProducts);

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const notificationController = require('../controllers/notificationController');
-const { authenticateToken, authorizeRoles } = require('../../../shared/middleware/auth');
+const { authenticateToken, authorizeRoles } = require('/app/shared/middleware/auth');
 
 // All notification routes require authentication
 router.use(authenticateToken);

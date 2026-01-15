@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const inventoryController = require('../controllers/inventoryController');
-const { authenticateToken, authorizeRoles } = require('../../../shared/middleware/auth');
-const { validateMongoId } = require('../../../shared/middleware/validation');
+const { authenticateToken, authorizeRoles } = require('/app/shared/middleware/auth');
+const { validateMongoId } = require('/app/shared/middleware/validation');
 
 // All inventory routes require authentication
 router.use(authenticateToken);

@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const orderItemController = require('../controllers/orderItemController');
-const { authenticateToken, authorizeRoles } = require('../../../shared/middleware/auth');
-const { validateMongoId } = require('../../../shared/middleware/validation');
+const { authenticateToken, authorizeRoles } = require('/app/shared/middleware/auth');
+const { validateMongoId } = require('/app/shared/middleware/validation');
 
 // All order item routes require authentication
 router.use(authenticateToken);

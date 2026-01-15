@@ -1,102 +1,42 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 
-import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
+import Layout from './components/Layout/Layout';
 
-// Pages
-import Dashboard from './pages/Dashboard/Dashboard';
-import Products from './pages/Products/Products';
+import Dashboard from './pages/Dashboard';
+import Products from './pages/Products';
 import AddProduct from './pages/Products/AddProduct';
-import EditProduct from './pages/Products/EditProduct';
-import Orders from './pages/Orders/Orders';
-import OrderDetail from './pages/Orders/OrderDetail';
-import Analytics from './pages/Analytics/Analytics';
-import Profile from './pages/Profile/Profile';
+import Orders from './pages/Orders';
+import Analytics from './pages/Analytics';
+import Settings from './pages/Settings';
 import Login from './pages/Auth/Login';
-import Register from './pages/Auth/Register';
+
+const ProtectedLayout = () => (
+  <ProtectedRoute>
+    <Layout>
+      <Outlet />
+    </Layout>
+  </ProtectedRoute>
+);
 
 function App() {
-  const { isAuthenticated } = useSelector((state) => state.auth);
-
   return (
-    <Layout>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+    <Routes>
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/login" element={<Login />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/products"
-          element={
-            <ProtectedRoute>
-              <Products />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/products/add"
-          element={
-            <ProtectedRoute>
-              <AddProduct />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/products/edit/:id"
-          element={
-            <ProtectedRoute>
-              <EditProduct />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/orders"
-          element={
-            <ProtectedRoute>
-              <Orders />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/orders/:id"
-          element={
-            <ProtectedRoute>
-              <OrderDetail />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/analytics"
-          element={
-            <ProtectedRoute>
-              <Analytics />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
+      <Route element={<ProtectedLayout />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/add" element={<AddProduct />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/settings" element={<Settings />} />
+      </Route>
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Layout>
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
   );
 }
 
