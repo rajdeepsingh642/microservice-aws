@@ -1,0 +1,12 @@
+node_modules
+logs
+coverage
+.git
+.gitignore
+Dockerfile
+README*
+*.log
+.env*
+test
+tests
+__tests__

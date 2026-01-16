@@ -1,0 +1,232 @@
+version: '3.8'
+
+services:
+  # Backend Services
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      REDIS_URL: redis://redis:6379
+      ALLOWED_ORIGINS: http://localhost:3100,http://localhost:3101,http://localhost:3102
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    networks:
+      - ecommerce-network
+
+  product-service:
+    build:
+      context: ./backend/product-service
+      dockerfile: Dockerfile
+    container_name: product-service
+    restart: unless-stopped
+    environment:
+      PORT: 3001
+      MONGODB_URL: mongodb://mongodb:27017/products
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - ecommerce-network
+
+  order-service:
+    build:
+      context: ./backend/order-service
+      dockerfile: Dockerfile
+    container_name: order-service
+    restart: unless-stopped
+    environment:
+      PORT: 3002
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/orders
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - ecommerce-network
+
+  payment-service:
+    build:
+      context: ./backend/payment-service
+      dockerfile: Dockerfile
+    container_name: payment-service
+    restart: unless-stopped
+    environment:
+      PORT: 3003
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/payments
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3003:3003"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - ecommerce-network
+
+  review-service:
+    build:
+      context: ./backend/review-service
+      dockerfile: Dockerfile
+    container_name: review-service
+    restart: unless-stopped
+    environment:
+      PORT: 3008
+      MONGODB_URL: mongodb://mongodb:27017/reviews
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3008:3008"
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - ecommerce-network
+
+  search-service:
+    build:
+      context: ./backend/search-service
+      dockerfile: Dockerfile
+    container_name: search-service
+    restart: unless-stopped
+    environment:
+      PORT: 3005
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3005:3005"
+    depends_on:
+      - elasticsearch
+      - redis
+    networks:
+      - ecommerce-network
+
+  notification-service:
+    build:
+      context: ./backend/notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    restart: unless-stopped
+    environment:
+      PORT: 3006
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3006:3006"
+    depends_on:
+      - redis
+    networks:
+      - ecommerce-network
+
+  # Frontend Applications (baked-in images, no volume mounts)
+  buyer-app:
+    build:
+      context: ./frontend/buyer-app
+      dockerfile: Dockerfile.prod
+    container_name: buyer-app
+    restart: unless-stopped
+    environment:
+      REACT_APP_API_URL: http://localhost:3000
+      REACT_APP_ENV: production
+    ports:
+      - "3100:80"
+    networks:
+      - ecommerce-network
+
+  seller-app:
+    build:
+      context: ./frontend/seller-app
+      dockerfile: Dockerfile.prod
+    container_name: seller-app
+    restart: unless-stopped
+    environment:
+      REACT_APP_API_URL: http://localhost:3000
+      REACT_APP_ENV: production
+    ports:
+      - "3101:80"
+    networks:
+      - ecommerce-network
+
+  admin-app:
+    build:
+      context: ./frontend/admin-app
+      dockerfile: Dockerfile.prod
+    container_name: admin-app
+    restart: unless-stopped
+    environment:
+      REACT_APP_API_URL: http://localhost:3000
+      REACT_APP_ENV: production
+    ports:
+      - "3102:80"
+    networks:
+      - ecommerce-network
+
+  # Infrastructure
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - ecommerce-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: orders
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ecommerce-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - ecommerce-network
+
+volumes:
+  mongodb_data:
+  postgres_data:
+  redis_data:
+  elasticsearch_data:
+
+networks:
+  ecommerce-network:
+    driver: bridge

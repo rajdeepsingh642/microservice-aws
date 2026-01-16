@@ -64,18 +64,28 @@ const Home = () => {
         
         // Fetch products from API
         const productsResponse = await productsAPI.getProducts();
-        const enhancedProducts = productsResponse.data.data.map(product => ({
+        const rawProducts = Array.isArray(productsResponse?.data?.products)
+          ? productsResponse.data.products
+          : Array.isArray(productsResponse?.data?.data)
+            ? productsResponse.data.data
+            : [];
+
+        const enhancedProducts = rawProducts.map(product => ({
           ...product,
           discount: Math.random() > 0.5 ? Math.floor(Math.random() * 50) + 10 : 0,
           badge: Math.random() > 0.7 ? 'Bestseller' : Math.random() > 0.5 ? 'Hot Deal' : null,
           rating: 4.2 + Math.random() * 0.8,
           reviews: Math.floor(Math.random() * 500) + 50,
           delivery: Math.random() > 0.5 ? 'Free Delivery' : 'Express Delivery',
-          seller: {
+          seller: product.seller || (product.sellerId ? {
+            name: `${product.sellerId.firstName || ''} ${product.sellerId.lastName || ''}`.trim() || 'Seller',
+            rating: 4.5,
+            location: 'India'
+          } : {
             name: `Seller${Math.floor(Math.random() * 100)}`,
             rating: 4.0 + Math.random(),
             location: 'Mumbai, India'
-          }
+          })
         }));
 
         setProducts(enhancedProducts);

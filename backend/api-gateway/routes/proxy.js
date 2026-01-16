@@ -10,52 +10,52 @@ const services = {
     target: process.env.PRODUCT_SERVICE_URL || 'http://localhost:3001',
     changeOrigin: true,
     pathRewrite: {
-      '^/api/products': '/api/products',
-      '^/api/categories': '/api/categories',
-      '^/api/inventory': '/api/inventory'
+      '^/products': '/api/products',
+      '^/categories': '/api/categories',
+      '^/inventory': '/api/inventory'
     }
   },
   orders: {
     target: process.env.ORDER_SERVICE_URL || 'http://localhost:3002',
     changeOrigin: true,
     pathRewrite: {
-      '^/api/orders': '/api/orders',
-      '^/api/order-items': '/api/order-items'
+      '^/orders': '/api/orders',
+      '^/order-items': '/api/order-items'
     }
   },
   payments: {
     target: process.env.PAYMENT_SERVICE_URL || 'http://localhost:3003',
     changeOrigin: true,
     pathRewrite: {
-      '^/api/payments': '/api/payments',
-      '^/api/refunds': '/api/refunds',
-      '^/api/webhooks': '/api/webhooks'
+      '^/payments': '/api/payments',
+      '^/refunds': '/api/refunds',
+      '^/webhooks': '/api/webhooks'
     }
   },
   reviews: {
     target: process.env.REVIEW_SERVICE_URL || 'http://localhost:3008',
     changeOrigin: true,
     pathRewrite: {
-      '^/api/reviews': '/api/reviews',
-      '^/api/ratings': '/api/ratings'
+      '^/reviews': '/api/reviews',
+      '^/ratings': '/api/ratings'
     }
   },
   search: {
     target: process.env.SEARCH_SERVICE_URL || 'http://localhost:3005',
     changeOrigin: true,
     pathRewrite: {
-      '^/api/search': '/api/search',
-      '^/api/analytics': '/api/analytics'
+      '^/search': '/api/search',
+      '^/analytics': '/api/analytics'
     }
   },
   notifications: {
     target: process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:3006',
     changeOrigin: true,
     pathRewrite: {
-      '^/api/notifications': '/api/notifications',
-      '^/api/emails': '/api/emails',
-      '^/api/sms': '/api/sms',
-      '^/api/push': '/api/push'
+      '^/notifications': '/api/notifications',
+      '^/emails': '/api/emails',
+      '^/sms': '/api/sms',
+      '^/push': '/api/push'
     }
   }
 };
@@ -66,9 +66,9 @@ Object.keys(services).forEach(serviceName => {
   
   // Apply authentication middleware for protected routes
   const publicPaths = [
-    '/api/products',
-    '/api/search',
-    '/api/ratings'
+    '/products',
+    '/search',
+    '/ratings'
   ];
 
   const isPublicPath = (path) => {

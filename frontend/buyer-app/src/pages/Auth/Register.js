@@ -65,8 +65,10 @@ const Register = () => {
     }
     if (!formData.password) {
       errors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+    } else if (formData.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
+    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(formData.password)) {
+      errors.password = 'Password must contain uppercase, lowercase, number, and special character';
     }
     if (!formData.confirmPassword) {
       errors.confirmPassword = 'Please confirm your password';
@@ -87,6 +89,7 @@ const Register = () => {
 
     try {
       const { confirmPassword, ...registerData } = formData;
+      registerData.role = 'buyer';
       const response = await authAPI.register(registerData);
       
       dispatch(registerSuccess({

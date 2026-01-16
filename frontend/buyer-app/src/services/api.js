@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
 // Create axios instance
 const api = axios.create({
@@ -37,7 +37,7 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem('refreshToken');
         if (refreshToken) {
-          const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+          const response = await axios.post(`${API_BASE_URL}/api/auth/refresh`, {
             refreshToken,
           });
 
@@ -63,15 +63,15 @@ api.interceptors.response.use(
 
 // Auth API
 export const authAPI = {
-  login: (credentials) => api.post('/auth/login', credentials),
-  register: (userData) => api.post('/auth/register', userData),
-  logout: (refreshToken) => api.post('/auth/logout', { refreshToken }),
-  refreshToken: (refreshToken) => api.post('/auth/refresh', { refreshToken }),
-  getProfile: () => api.get('/auth/profile'),
-  updateProfile: (userData) => api.put('/auth/profile', userData),
-  changePassword: (passwordData) => api.post('/auth/change-password', passwordData),
-  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
-  resetPassword: (token, password) => api.post('/auth/reset-password', { token, password }),
+  login: (credentials) => api.post('/api/auth/login', credentials),
+  register: (userData) => api.post('/api/auth/register', userData),
+  logout: (refreshToken) => api.post('/api/auth/logout', { refreshToken }),
+  refreshToken: (refreshToken) => api.post('/api/auth/refresh', { refreshToken }),
+  getProfile: () => api.get('/api/auth/profile'),
+  updateProfile: (userData) => api.put('/api/auth/profile', userData),
+  changePassword: (passwordData) => api.post('/api/auth/change-password', passwordData),
+  forgotPassword: (email) => api.post('/api/auth/forgot-password', { email }),
+  resetPassword: (token, password) => api.post('/api/auth/reset-password', { token, password }),
 };
 
 // Products API
@@ -79,9 +79,9 @@ export const productsAPI = {
   getProducts: (params) => api.get('/api/products', { params }),
   getProduct: (id) => api.get(`/api/products/${id}`),
   getCategories: () => api.get('/api/categories'),
-  searchProducts: (params) => api.get('/search/products', { params }),
-  getSearchSuggestions: (query) => api.get('/search/suggestions', { params: { q: query } }),
-  getTrendingSearches: () => api.get('/search/trending'),
+  searchProducts: (params) => api.get('/api/search/products', { params }),
+  getSearchSuggestions: (query) => api.get('/api/search/suggestions', { params: { q: query } }),
+  getTrendingSearches: () => api.get('/api/search/trending'),
 };
 
 // Cart API

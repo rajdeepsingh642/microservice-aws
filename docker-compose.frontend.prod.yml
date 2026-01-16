@@ -1,55 +1,51 @@
 version: '3.8'
 
 services:
-  # Frontend Applications
   buyer-app:
     build:
       context: ./frontend/buyer-app
-      dockerfile: Dockerfile
-    container_name: buyer-app
+      dockerfile: Dockerfile.prod
+    container_name: buyer-app-prod
     restart: unless-stopped
     environment:
       REACT_APP_API_URL: http://localhost:3000
-      REACT_APP_ENV: development
+      REACT_APP_ENV: production
     ports:
-      - "3100:3000"
+      - "3100:80"
     volumes:
-      - ./frontend/buyer-app:/app
-      - /app/node_modules
+      - ./frontend/buyer-app/build:/usr/share/nginx/html
     networks:
       - ecommerce-network
 
   seller-app:
     build:
       context: ./frontend/seller-app
-      dockerfile: Dockerfile
-    container_name: seller-app
+      dockerfile: Dockerfile.prod
+    container_name: seller-app-prod
     restart: unless-stopped
     environment:
       REACT_APP_API_URL: http://localhost:3000
-      REACT_APP_ENV: development
+      REACT_APP_ENV: production
     ports:
-      - "3101:3000"
+      - "3101:80"
     volumes:
-      - ./frontend/seller-app:/app
-      - /app/node_modules
+      - ./frontend/seller-app/build:/usr/share/nginx/html
     networks:
       - ecommerce-network
 
   admin-app:
     build:
       context: ./frontend/admin-app
-      dockerfile: Dockerfile
-    container_name: admin-app
+      dockerfile: Dockerfile.prod
+    container_name: admin-app-prod
     restart: unless-stopped
     environment:
       REACT_APP_API_URL: http://localhost:3000
-      REACT_APP_ENV: development
+      REACT_APP_ENV: production
     ports:
-      - "3102:3000"
+      - "3102:80"
     volumes:
-      - ./frontend/admin-app:/app
-      - /app/node_modules
+      - ./frontend/admin-app/build:/usr/share/nginx/html
     networks:
       - ecommerce-network
 

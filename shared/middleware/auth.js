@@ -1,6 +1,22 @@
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 
+if (!process.env.JWT_SECRET) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET must be set in production');
+  }
+  process.env.JWT_SECRET = 'dev-jwt-secret';
+  logger.warn('JWT_SECRET not set, using development default');
+}
+
+if (!process.env.JWT_REFRESH_SECRET) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_REFRESH_SECRET must be set in production');
+  }
+  process.env.JWT_REFRESH_SECRET = 'dev-jwt-refresh-secret';
+  logger.warn('JWT_REFRESH_SECRET not set, using development default');
+}
+
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
