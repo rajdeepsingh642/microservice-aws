@@ -1,6 +1,9 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { logout as logoutAction } from '../../store/slices/authSlice';
+import { clearCart } from '../../store/slices/cartSlice';
+import { clearWishlist } from '../../store/slices/wishlistSlice';
 import {
   Menu,
   MenuItem,
@@ -40,7 +43,9 @@ const UserMenu = ({ user, open, onOpen, onClose }) => {
   };
 
   const handleLogout = () => {
-    dispatch({ type: 'LOGOUT' });
+    dispatch(logoutAction());
+    dispatch(clearCart());
+    dispatch(clearWishlist());
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     navigate('/login');

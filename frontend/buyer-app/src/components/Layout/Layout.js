@@ -74,7 +74,7 @@ const Layout = () => {
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <AppBar
         position="fixed"
         sx={{
@@ -194,6 +194,7 @@ const Layout = () => {
           p: 3,
           width: { md: `calc(100% - ${drawerWidth}px)` },
           mt: 8, // AppBar height
+          overflowY: 'auto',
         }}
       >
         <Outlet />

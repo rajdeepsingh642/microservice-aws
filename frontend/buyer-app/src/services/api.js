@@ -31,7 +31,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if ([401, 403].includes(error.response?.status) && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
@@ -55,6 +55,12 @@ api.interceptors.response.use(
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }
+    }
+
+    if (error.response?.status === 403) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      window.location.href = '/login';
     }
 
     return Promise.reject(error);
