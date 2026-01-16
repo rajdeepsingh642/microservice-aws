@@ -4,10 +4,12 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const { authenticateToken } = require('/app/shared/middleware/auth');
 const proxyService = require('../services/proxyService');
 
+const inDocker = process.env.DOCKER === 'true';
+
 // Service configurations
 const services = {
   products: {
-    target: process.env.PRODUCT_SERVICE_URL || 'http://localhost:3001',
+    target: process.env.PRODUCT_SERVICE_URL || (inDocker ? 'http://product-service:3001' : 'http://localhost:3001'),
     changeOrigin: true,
     pathRewrite: {
       '^/products': '/api/products',
@@ -16,7 +18,7 @@ const services = {
     }
   },
   orders: {
-    target: process.env.ORDER_SERVICE_URL || 'http://localhost:3002',
+    target: process.env.ORDER_SERVICE_URL || (inDocker ? 'http://order-service:3002' : 'http://localhost:3002'),
     changeOrigin: true,
     pathRewrite: {
       '^/orders': '/api/orders',
@@ -24,7 +26,7 @@ const services = {
     }
   },
   payments: {
-    target: process.env.PAYMENT_SERVICE_URL || 'http://localhost:3003',
+    target: process.env.PAYMENT_SERVICE_URL || (inDocker ? 'http://payment-service:3003' : 'http://localhost:3003'),
     changeOrigin: true,
     pathRewrite: {
       '^/payments': '/api/payments',
@@ -33,7 +35,7 @@ const services = {
     }
   },
   reviews: {
-    target: process.env.REVIEW_SERVICE_URL || 'http://localhost:3008',
+    target: process.env.REVIEW_SERVICE_URL || (inDocker ? 'http://review-service:3004' : 'http://localhost:3004'),
     changeOrigin: true,
     pathRewrite: {
       '^/reviews': '/api/reviews',
@@ -41,7 +43,7 @@ const services = {
     }
   },
   search: {
-    target: process.env.SEARCH_SERVICE_URL || 'http://localhost:3005',
+    target: process.env.SEARCH_SERVICE_URL || (inDocker ? 'http://search-service:3005' : 'http://localhost:3005'),
     changeOrigin: true,
     pathRewrite: {
       '^/search': '/api/search',
@@ -49,7 +51,7 @@ const services = {
     }
   },
   notifications: {
-    target: process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:3006',
+    target: process.env.NOTIFICATION_SERVICE_URL || (inDocker ? 'http://notification-service:3006' : 'http://localhost:3006'),
     changeOrigin: true,
     pathRewrite: {
       '^/notifications': '/api/notifications',

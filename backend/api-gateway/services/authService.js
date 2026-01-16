@@ -8,6 +8,17 @@ class AuthService {
     this.notificationServiceUrl = process.env.NOTIFICATION_SERVICE_URL || 'http://notification-service:3006';
   }
 
+  async setWithExpiry(redisClient, key, ttlSeconds, value) {
+    if (!redisClient) return;
+
+    if (typeof redisClient.setEx === 'function') {
+      await redisClient.setEx(key, ttlSeconds, value);
+      return;
+    }
+
+    await redisClient.set(key, value, { EX: ttlSeconds });
+  }
+
   async getUserByEmail(email) {
     try {
       // This would typically call a user service
@@ -133,7 +144,7 @@ class AuthService {
       const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
-        await redis.setex(`refresh_token:${userId}`, 7 * 24 * 60 * 60, refreshToken); // 7 days
+        await this.setWithExpiry(redis, `refresh_token:${userId}`, 7 * 24 * 60 * 60, refreshToken); // 7 days
       }
     } catch (error) {
       logger.error('Error storing refresh token:', error);
@@ -183,7 +194,7 @@ class AuthService {
       const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
-        await redis.setex(`password_reset:${token}`, 60 * 60, userId); // 1 hour
+        await this.setWithExpiry(redis, `password_reset:${token}`, 60 * 60, userId); // 1 hour
       }
     } catch (error) {
       logger.error('Error storing password reset token:', error);
@@ -221,7 +232,7 @@ class AuthService {
       const redis = require('/app/shared/utils/database').getRedisClient();
       
       if (redis) {
-        await redis.setex(`email_verification:${token}`, 24 * 60 * 60, userId); // 24 hours
+        await this.setWithExpiry(redis, `email_verification:${token}`, 24 * 60 * 60, userId); // 24 hours
       }
     } catch (error) {
       logger.error('Error storing email verification token:', error);

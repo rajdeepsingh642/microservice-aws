@@ -127,6 +127,17 @@ const Checkout = () => {
     setIsLoading(true);
 
     try {
+      const shippingAddressPayload = {
+        street: orderData.shippingAddress.address,
+        city: orderData.shippingAddress.city,
+        state: orderData.shippingAddress.state,
+        zipCode: orderData.shippingAddress.zipCode,
+        country: orderData.shippingAddress.country,
+        firstName: orderData.shippingAddress.firstName,
+        lastName: orderData.shippingAddress.lastName,
+        phone: orderData.shippingAddress.phone,
+      };
+
       const orderPayload = {
         items: items.map(item => ({
           productId: item._id || item.productId,
@@ -135,7 +146,7 @@ const Checkout = () => {
           quantity: item.quantity,
           image: item.image
         })),
-        shippingAddress: orderData.shippingAddress,
+        shippingAddress: shippingAddressPayload,
         paymentMethod: orderData.paymentMethod,
         subtotal: total,
         tax: total * 0.08,
@@ -144,11 +155,12 @@ const Checkout = () => {
       };
 
       const orderResponse = await ordersAPI.createOrder(orderPayload);
+      const createdOrderId = orderResponse?.data?.order?.id;
 
       const paymentPayload = {
-        orderId: orderResponse.data.order._id,
+        orderId: createdOrderId,
         amount: total * 1.08,
-        method: orderData.paymentMethod,
+        paymentMethod: orderData.paymentMethod,
         currency: 'USD',
       };
 

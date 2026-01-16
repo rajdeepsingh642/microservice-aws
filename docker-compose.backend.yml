@@ -93,6 +93,7 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: development
+      DOCKER: 'true'
       PORT: 3000
       MONGODB_URI: mongodb://admin:password@mongodb:27017/ecommerce?authSource=admin
       POSTGRES_URI: postgresql://postgres:password@postgres:5432/ecommerce

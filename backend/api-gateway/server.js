@@ -63,8 +63,11 @@ app.use('/api/', limiter);
 // General middleware
 app.use(compression());
 app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Parse bodies only for routes that are handled directly by the gateway.
+// Proxied routes should stream through to downstream services.
+app.use('/api/auth', express.json({ limit: '10mb' }));
+app.use('/api/auth', express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {

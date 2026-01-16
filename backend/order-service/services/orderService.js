@@ -58,8 +58,14 @@ class OrderService {
           throw new Error(`Product ${item.productId} is not available`);
         }
 
-        if (product.inventory.available < item.quantity) {
-          throw new Error(`Insufficient inventory for product ${product.name}. Available: ${product.inventory.available}, Requested: ${item.quantity}`);
+        const availableInventory = product?.inventory?.available ?? product?.stock ?? product?.inventory?.quantity;
+
+        if (typeof availableInventory !== 'number') {
+          throw new Error(`Inventory data missing for product ${product.name || item.productId}`);
+        }
+
+        if (availableInventory < item.quantity) {
+          throw new Error(`Insufficient inventory for product ${product.name}. Available: ${availableInventory}, Requested: ${item.quantity}`);
         }
 
         const unitPrice = product.price;
@@ -105,6 +111,10 @@ class OrderService {
 
   async reserveInventory(productId, quantity) {
     try {
+      if (typeof productId === 'string' && productId.startsWith('mock')) {
+        logger.info(`Skipping inventory reserve for mock product ${productId}`);
+        return;
+      }
       const productServiceUrl = process.env.PRODUCT_SERVICE_URL || 'http://product-service:3001';
       
       await axios.patch(`${productServiceUrl}/api/inventory/${productId}/reserve`, {
@@ -120,6 +130,10 @@ class OrderService {
 
   async releaseInventory(productId, quantity) {
     try {
+      if (typeof productId === 'string' && productId.startsWith('mock')) {
+        logger.info(`Skipping inventory release for mock product ${productId}`);
+        return;
+      }
       const productServiceUrl = process.env.PRODUCT_SERVICE_URL || 'http://product-service:3001';
       
       await axios.patch(`${productServiceUrl}/api/inventory/${productId}/release`, {

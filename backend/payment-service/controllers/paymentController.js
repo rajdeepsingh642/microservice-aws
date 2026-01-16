@@ -20,6 +20,15 @@ class PaymentController {
       // Process payment based on method
       let paymentResult;
       switch (paymentMethod) {
+        case 'credit_card':
+          paymentResult = await paymentService.processCreditCardPayment({
+            orderId,
+            userId,
+            amount,
+            paymentDetails,
+            billingAddress
+          });
+          break;
         case 'stripe':
           paymentResult = await paymentService.processStripePayment({
             orderId,

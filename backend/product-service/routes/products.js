@@ -13,7 +13,7 @@ router.get('/', productController.getProducts);
 router.get('/featured', productController.getFeaturedProducts);
 router.get('/category/:category', productController.getProductsByCategory);
 router.get('/search', productController.searchProducts);
-router.get('/:id', validateMongoId('id'), productController.getProductById);
+router.get('/:id', productController.getProductById);
 
 // Protected routes - require authentication
 router.use(authenticateToken);

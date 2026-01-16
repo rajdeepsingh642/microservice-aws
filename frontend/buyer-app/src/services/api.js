@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
 // Create axios instance
 const api = axios.create({
@@ -79,33 +79,33 @@ export const productsAPI = {
   getProducts: (params) => api.get('/api/products', { params }),
   getProduct: (id) => api.get(`/api/products/${id}`),
   getCategories: () => api.get('/api/categories'),
-  searchProducts: (params) => api.get('/api/search/products', { params }),
-  getSearchSuggestions: (query) => api.get('/api/search/suggestions', { params: { q: query } }),
-  getTrendingSearches: () => api.get('/api/search/trending'),
+  searchProducts: (params) => api.get('/search/products', { params }),
+  getSearchSuggestions: (query) => api.get('/search/suggestions', { params: { q: query } }),
+  getTrendingSearches: () => api.get('/search/trending'),
 };
 
 // Cart API
 export const cartAPI = {
-  getCart: () => api.get('/cart'),
-  addToCart: (item) => api.post('/cart', item),
-  updateCartItem: (itemId, quantity) => api.put(`/cart/${itemId}`, { quantity }),
-  removeFromCart: (itemId) => api.delete(`/cart/${itemId}`),
-  clearCart: () => api.delete('/cart'),
+  getCart: () => api.get('/api/cart'),
+  addToCart: (item) => api.post('/api/cart', item),
+  updateCartItem: (itemId, quantity) => api.put(`/api/cart/${itemId}`, { quantity }),
+  removeFromCart: (itemId) => api.delete(`/api/cart/${itemId}`),
+  clearCart: () => api.delete('/api/cart'),
 };
 
 // Orders API
 export const ordersAPI = {
-  getOrders: (params) => api.get('/orders/my-orders', { params }),
-  getOrder: (id) => api.get(`/orders/my-orders/${id}`),
-  createOrder: (orderData) => api.post('/orders', orderData),
-  cancelOrder: (id, reason) => api.patch(`/orders/my-orders/${id}/cancel`, { reason }),
+  getOrders: (params) => api.get('/api/orders/my-orders', { params }),
+  getOrder: (id) => api.get(`/api/orders/my-orders/${id}`),
+  createOrder: (orderData) => api.post('/api/orders', orderData),
+  cancelOrder: (id, reason) => api.patch(`/api/orders/my-orders/${id}/cancel`, { reason }),
 };
 
 // Payments API
 export const paymentsAPI = {
-  getPayments: (params) => api.get('/payments/my-payments', { params }),
-  getPayment: (id) => api.get(`/payments/${id}`),
-  createPayment: (paymentData) => api.post('/payments', paymentData),
+  getPayments: (params) => api.get('/api/payments/my-payments', { params }),
+  getPayment: (id) => api.get(`/api/payments/${id}`),
+  createPayment: (paymentData) => api.post('/api/payments', paymentData),
 };
 
 // Reviews API

@@ -167,6 +167,9 @@ class OrderController {
 
         // Create order items
         for (const item of orderData.validatedItems) {
+          const isUuid = (value) => typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+          const dbProductId = isUuid(item.productId) ? item.productId : uuidv4();
+
           const itemQuery = `
             INSERT INTO order_items (
               order_id, product_id, product_name, product_sku,
@@ -176,13 +179,16 @@ class OrderController {
 
           await client.query(itemQuery, [
             order.id,
-            item.productId,
+            dbProductId,
             item.productName,
             item.productSku,
             item.quantity,
             item.unitPrice,
             item.totalPrice,
-            JSON.stringify(item.productSnapshot)
+            JSON.stringify({
+              ...item.productSnapshot,
+              originalProductId: item.productId
+            })
           ]);
 
           // Reserve inventory

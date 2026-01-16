@@ -11,6 +11,46 @@ class PaymentService {
     this.initializeConnections();
   }
 
+  async processCreditCardPayment({ orderId, userId, amount, paymentDetails, billingAddress }) {
+    try {
+      const pool = database.getPostgresPool();
+
+      const paymentId = uuidv4();
+      const paymentIntentId = `cc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      const insertQuery = `
+        INSERT INTO payments (
+          id, order_id, user_id, payment_intent_id, payment_method, 
+          amount, currency, status, payment_details, billing_address
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        RETURNING *
+      `;
+
+      const paymentValues = [
+        paymentId,
+        orderId,
+        userId,
+        paymentIntentId,
+        'credit_card',
+        amount,
+        'USD',
+        'pending',
+        JSON.stringify(paymentDetails || {}),
+        JSON.stringify(billingAddress || {})
+      ];
+
+      const result = await pool.query(insertQuery, paymentValues);
+      const payment = result.rows[0];
+
+      await this.sendPaymentEvent(payment, 'pending');
+
+      return payment;
+    } catch (error) {
+      logger.error('Error processing credit card payment:', error);
+      throw new Error(`Credit card payment failed: ${error.message}`);
+    }
+  }
+
   async initializeConnections() {
     try {
       // Initialize RabbitMQ
