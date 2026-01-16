@@ -10,6 +10,13 @@ class OrderService {
     this.initializeConnections();
   }
 
+  isUuid(value) {
+    return (
+      typeof value === 'string' &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
+    );
+  }
+
   async initializeConnections() {
     try {
       // Initialize RabbitMQ
@@ -54,6 +61,15 @@ class OrderService {
         const response = await axios.get(`${productServiceUrl}/api/products/${item.productId}`);
         const product = response.data;
 
+        const sellerEmail =
+          product?.sellerId?.email ||
+          product?.seller?.email ||
+          product?.sellerEmail ||
+          null;
+
+        const rawSellerId = product?.sellerId?._id || product?.sellerId || product?.seller_id || null;
+        const sellerId = this.isUuid(rawSellerId) ? rawSellerId : null;
+
         if (!product || product.status !== 'active') {
           throw new Error(`Product ${item.productId} is not available`);
         }
@@ -78,11 +94,15 @@ class OrderService {
           quantity: item.quantity,
           unitPrice,
           totalPrice,
+          sellerEmail,
+          sellerId,
           productSnapshot: {
             name: product.name,
             sku: product.sku,
             price: product.price,
-            images: product.images
+            images: product.images,
+            sellerEmail,
+            sellerId
           }
         });
 

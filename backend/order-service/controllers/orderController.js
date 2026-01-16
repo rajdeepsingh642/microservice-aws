@@ -173,8 +173,9 @@ class OrderController {
           const itemQuery = `
             INSERT INTO order_items (
               order_id, product_id, product_name, product_sku,
+              seller_id, seller_email,
               quantity, unit_price, total_price, product_snapshot
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
           `;
 
           await client.query(itemQuery, [
@@ -182,6 +183,8 @@ class OrderController {
             dbProductId,
             item.productName,
             item.productSku,
+            item.sellerId || null,
+            item.sellerEmail || null,
             item.quantity,
             item.unitPrice,
             item.totalPrice,
@@ -319,11 +322,12 @@ class OrderController {
     try {
       const { page = 1, limit = 20, status } = req.query;
       const sellerId = req.user.userId;
+      const sellerEmail = req.user.email;
 
       const pool = database.getPostgresPool();
       
       let query = `
-        SELECT DISTINCT o.*, 
+        SELECT o.*, 
                json_agg(
                  json_build_object(
                    'id', oi.id,
@@ -333,17 +337,19 @@ class OrderController {
                    'unit_price', oi.unit_price,
                    'total_price', oi.total_price
                  )
-               ) as items
+               ) FILTER (WHERE oi.seller_id = $1 OR oi.seller_email = $2) as items
         FROM orders o
         INNER JOIN order_items oi ON o.id = oi.order_id
-        INNER JOIN products p ON oi.product_id = p.id::text
-        WHERE p.seller_id = $1
+        WHERE EXISTS (
+          SELECT 1 FROM order_items oi2
+          WHERE oi2.order_id = o.id AND (oi2.seller_id = $1 OR oi2.seller_email = $2)
+        )
       `;
       
-      const params = [sellerId];
+      const params = [sellerId, sellerEmail];
       
       if (status) {
-        query += ` AND o.status = $2`;
+        query += ` AND o.status = $3`;
         params.push(status);
       }
       
@@ -362,13 +368,12 @@ class OrderController {
         SELECT COUNT(DISTINCT o.id) 
         FROM orders o
         INNER JOIN order_items oi ON o.id = oi.order_id
-        INNER JOIN products p ON oi.product_id = p.id::text
-        WHERE p.seller_id = $1
+        WHERE (oi.seller_id = $1 OR oi.seller_email = $2)
       `;
-      const countParams = [sellerId];
+      const countParams = [sellerId, sellerEmail];
       
       if (status) {
-        countQuery += ' AND o.status = $2';
+        countQuery += ' AND o.status = $3';
         countParams.push(status);
       }
       
@@ -397,6 +402,7 @@ class OrderController {
     try {
       const { id } = req.params;
       const sellerId = req.user.userId;
+      const sellerEmail = req.user.email;
 
       const pool = database.getPostgresPool();
       
@@ -413,18 +419,17 @@ class OrderController {
                    'total_price', oi.total_price,
                    'product_snapshot', oi.product_snapshot
                  )
-               ) as items
+               ) FILTER (WHERE oi.seller_id = $2 OR oi.seller_email = $3) as items
         FROM orders o
         LEFT JOIN order_items oi ON o.id = oi.order_id
         WHERE o.id = $1 AND EXISTS (
           SELECT 1 FROM order_items oi2
-          INNER JOIN products p ON oi2.product_id = p.id::text
-          WHERE oi2.order_id = o.id AND p.seller_id = $2
+          WHERE oi2.order_id = o.id AND (oi2.seller_id = $2 OR oi2.seller_email = $3)
         )
         GROUP BY o.id
       `;
 
-      const result = await pool.query(query, [id, sellerId]);
+      const result = await pool.query(query, [id, sellerId, sellerEmail]);
 
       if (result.rows.length === 0) {
         return res.status(404).json({

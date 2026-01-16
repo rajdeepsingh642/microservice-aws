@@ -48,6 +48,11 @@ const Login = () => {
       });
 
       dispatch(loginSuccess(response.data));
+
+      // Persist tokens so refresh doesn't log you out
+      localStorage.setItem('token', response.data.tokens.accessToken);
+      localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
+
       navigate('/dashboard');
     } catch (err) {
       const message =

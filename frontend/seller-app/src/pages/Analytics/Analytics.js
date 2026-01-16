@@ -324,15 +324,19 @@ const Analytics = () => {
               Sales by Category
             </Typography>
             <ResponsiveContainer width="100%" height={350}>
-              <PieChart data={analyticsData.categoryData}>
+              <PieChart>
                 <Pie
+                  data={Array.isArray(analyticsData.categoryData) ? analyticsData.categoryData : []}
                   dataKey="value"
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
                   fill="#8884d8"
-                  data={({ color }) => <Cell fill={color} />}
-                />
+                >
+                  {(Array.isArray(analyticsData.categoryData) ? analyticsData.categoryData : []).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color || '#8884d8'} />
+                  ))}
+                </Pie>
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
@@ -401,15 +405,19 @@ const Analytics = () => {
               Customer Types
             </Typography>
             <ResponsiveContainer width="100%" height={200}>
-              <PieChart data={analyticsData.customerData}>
+              <PieChart>
                 <Pie
+                  data={Array.isArray(analyticsData.customerData) ? analyticsData.customerData : []}
                   dataKey="value"
                   cx="50%"
                   cy="50%"
                   outerRadius={60}
                   fill="#8884d8"
-                  data={({ color }) => <Cell fill={color} />}
-                />
+                >
+                  {(Array.isArray(analyticsData.customerData) ? analyticsData.customerData : []).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color || '#8884d8'} />
+                  ))}
+                </Pie>
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>

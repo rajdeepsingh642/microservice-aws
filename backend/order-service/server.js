@@ -155,6 +155,8 @@ async function initializeDatabase() {
       product_id UUID NOT NULL,
       product_name VARCHAR(255) NOT NULL,
       product_sku VARCHAR(100) NOT NULL,
+      seller_id UUID,
+      seller_email VARCHAR(255),
       quantity INTEGER NOT NULL,
       unit_price DECIMAL(10,2) NOT NULL,
       total_price DECIMAL(10,2) NOT NULL,
@@ -165,6 +167,10 @@ async function initializeDatabase() {
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
   `);
+
+  // Backward-compatible migrations for existing databases
+  await pool.query(`ALTER TABLE order_items ADD COLUMN IF NOT EXISTS seller_id UUID;`);
+  await pool.query(`ALTER TABLE order_items ADD COLUMN IF NOT EXISTS seller_email VARCHAR(255);`);
 
   // Create order_status_history table
   await pool.query(`
@@ -185,6 +191,8 @@ async function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
     CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
     CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
+    CREATE INDEX IF NOT EXISTS idx_order_items_seller_id ON order_items(seller_id);
+    CREATE INDEX IF NOT EXISTS idx_order_items_seller_email ON order_items(seller_email);
     CREATE INDEX IF NOT EXISTS idx_order_status_history_order_id ON order_status_history(order_id);
   `);
 

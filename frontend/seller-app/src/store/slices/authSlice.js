@@ -1,10 +1,34 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const decodeJwtPayload = (token) => {
+  try {
+    if (!token) return null;
+    const parts = token.split('.');
+    if (parts.length < 2) return null;
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(base64.length + (4 - (base64.length % 4)) % 4, '=');
+    const json = atob(padded);
+    return JSON.parse(json);
+  } catch (e) {
+    return null;
+  }
+};
+
+const storedToken = localStorage.getItem('token');
+const storedRefreshToken = localStorage.getItem('refreshToken');
+const storedUser = decodeJwtPayload(storedToken);
+
 const initialState = {
-  user: null,
-  token: null,
-  refreshToken: null,
-  isAuthenticated: false,
+  user: storedUser
+    ? {
+        email: storedUser.email,
+        role: storedUser.role,
+        userId: storedUser.userId,
+      }
+    : null,
+  token: storedToken || null,
+  refreshToken: storedRefreshToken || null,
+  isAuthenticated: Boolean(storedToken),
   loading: false,
   error: null
 };
