@@ -64,6 +64,60 @@ class AuthController {
     }
   }
 
+  async devSetRole(req, res) {
+    try {
+      if (String(process.env.NODE_ENV).toLowerCase() === 'production') {
+        return res.status(404).json({
+          error: 'Not Found'
+        });
+      }
+
+      const apiKey = req.headers['x-api-key'];
+      if (!process.env.SERVICE_API_KEY || apiKey !== process.env.SERVICE_API_KEY) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Invalid API key'
+        });
+      }
+
+      const { email, role } = req.body;
+      if (!email || !role) {
+        return res.status(400).json({
+          error: 'Bad Request',
+          message: 'email and role are required'
+        });
+      }
+
+      if (!['buyer', 'seller', 'admin'].includes(role)) {
+        return res.status(400).json({
+          error: 'Bad Request',
+          message: 'Invalid role'
+        });
+      }
+
+      const user = await authService.updateUserRoleByEmail(email, role);
+
+      res.json({
+        message: 'Role updated successfully',
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          isActive: user.isActive
+        }
+      });
+    } catch (error) {
+      const message = error?.message || 'Failed to update role';
+      logger.error('Error updating user role:', error);
+      res.status(500).json({
+        error: 'Internal Server Error',
+        message
+      });
+    }
+  }
+
   async login(req, res) {
     try {
       const { email, password } = req.body;
@@ -253,6 +307,9 @@ class AuthController {
 
       // Update user password
       await authService.updateUserPassword(userId, hashedPassword);
+
+      // Activate account after a successful password reset
+      await authService.activateUserAccount(userId);
 
       // Remove reset token
       await authService.removePasswordResetToken(token);

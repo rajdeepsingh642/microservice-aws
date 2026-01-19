@@ -22,7 +22,8 @@ import {
   Menu,
   Pagination,
   Tooltip,
-  Badge
+  Badge,
+  Alert
 } from '@mui/material';
 import {
   Visibility,
@@ -39,11 +40,15 @@ import {
   Email,
   LocationOn
 } from '@mui/icons-material';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const Orders = () => {
+  const token = useSelector((state) => state.auth?.token);
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
@@ -53,136 +58,83 @@ const Orders = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
-    // Simulate loading orders
-    setTimeout(() => {
-      const mockOrders = [
-        {
-          id: 'ORD-001',
-          customer: {
-            name: 'John Doe',
-            email: 'john@example.com',
-            phone: '+1 234-567-8900',
-            avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4?w=40&h=40&fit=crop&crop=face'
-          },
-          date: '2024-01-15',
-          time: '14:30',
-          total: 299.99,
-          subtotal: 299.99,
-          shipping: 0,
-          tax: 0,
-          status: 'processing',
-          paymentMethod: 'Credit Card',
-          paymentStatus: 'paid',
-          items: [
-            { name: 'Wireless Headphones', quantity: 1, price: 199.99, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=50&h=50&fit=crop' },
-            { name: 'Phone Case', quantity: 2, price: 50.00, image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=50&h=50&fit=crop' }
-          ],
-          shippingAddress: {
-            street: '123 Main St',
-            city: 'New York',
-            state: 'NY',
-            zip: '10001',
-            country: 'USA'
-          },
-          trackingNumber: 'TRK123456789',
-          estimatedDelivery: '2024-01-18'
-        },
-        {
-          id: 'ORD-002',
-          customer: {
-            name: 'Jane Smith',
-            email: 'jane@example.com',
-            phone: '+1 234-567-8901',
-            avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612c7d7?w=40&h=40&fit=crop&crop=face'
-          },
-          date: '2024-01-14',
-          time: '10:15',
-          total: 149.99,
-          subtotal: 149.99,
-          shipping: 0,
-          tax: 0,
-          status: 'shipped',
-          paymentMethod: 'PayPal',
-          paymentStatus: 'paid',
-          items: [
-            { name: 'Smart Watch Pro', quantity: 1, price: 149.99, image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=50&h=50&fit=crop' }
-          ],
-          shippingAddress: {
-            street: '456 Oak Ave',
-            city: 'Los Angeles',
-            state: 'CA',
-            zip: '90001',
-            country: 'USA'
-          },
-          trackingNumber: 'TRK987654321',
-          estimatedDelivery: '2024-01-16'
-        },
-        {
-          id: 'ORD-003',
-          customer: {
-            name: 'Bob Johnson',
-            email: 'bob@example.com',
-            phone: '+1 234-567-8902',
-            avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face'
-          },
-          date: '2024-01-13',
-          time: '16:45',
-          total: 89.99,
-          subtotal: 89.99,
-          shipping: 0,
-          tax: 0,
-          status: 'delivered',
-          paymentMethod: 'Debit Card',
-          paymentStatus: 'paid',
-          items: [
-            { name: 'Laptop Stand', quantity: 1, price: 89.99, image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=50&h=50&fit=crop' }
-          ],
-          shippingAddress: {
-            street: '789 Pine Rd',
-            city: 'Chicago',
-            state: 'IL',
-            zip: '60601',
-            country: 'USA'
-          },
-          trackingNumber: 'TRK456789123',
-          estimatedDelivery: '2024-01-15',
-          deliveredOn: '2024-01-15'
-        },
-        {
-          id: 'ORD-004',
-          customer: {
-            name: 'Alice Brown',
-            email: 'alice@example.com',
-            phone: '+1 234-567-8903',
-            avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face'
-          },
-          date: '2024-01-12',
-          time: '09:20',
-          total: 449.99,
-          subtotal: 449.99,
-          shipping: 0,
-          tax: 0,
-          status: 'pending',
-          paymentMethod: 'Credit Card',
-          paymentStatus: 'pending',
-          items: [
-            { name: 'Yoga Mat Premium', quantity: 2, price: 149.99, image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=50&h=50&fit=crop' },
-            { name: 'Water Bottle', quantity: 1, price: 150.01, image: 'https://images.unsplash.com/photo-1602141708476-35f9b8c7a5a8?w=50&h=50&fit=crop' }
-          ],
-          shippingAddress: {
-            street: '321 Elm St',
-            city: 'Houston',
-            state: 'TX',
-            zip: '77001',
-            country: 'USA'
-          }
-        }
-      ];
-      setOrders(mockOrders);
-      setFilteredOrders(mockOrders);
-      setLoading(false);
-    }, 1500);
-  }, []);
+    const fetchSellerOrders = async () => {
+      setLoading(true);
+      setError('');
+
+      try {
+        const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+        const response = await axios.get('/api/orders/seller-orders', {
+          headers,
+          params: { page: 1, limit: 200 }
+        });
+
+        const rawOrders = response?.data?.orders || [];
+
+        const mapped = rawOrders.map((o) => {
+          const createdAt = o?.created_at ? new Date(o.created_at) : null;
+          const date = createdAt ? createdAt.toISOString().slice(0, 10) : '';
+          const time = createdAt
+            ? createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : '';
+
+          const shippingAddress = o?.shipping_address || {};
+          const items = Array.isArray(o?.items) ? o.items : [];
+
+          return {
+            id: o?.order_number || o?.orderNumber || o?.id,
+            customer: {
+              name: shippingAddress?.name || 'Customer',
+              email: shippingAddress?.email || o?.user_email || '',
+              phone: shippingAddress?.phone || '',
+              avatar: ''
+            },
+            date,
+            time,
+            total: Number(o?.total_amount ?? o?.totalAmount ?? 0),
+            subtotal: Number(o?.subtotal ?? o?.subtotal_amount ?? o?.total_amount ?? 0),
+            shipping: Number(o?.shipping_amount ?? o?.shippingAmount ?? 0),
+            tax: Number(o?.tax_amount ?? o?.taxAmount ?? 0),
+            status: (o?.status || 'pending').toLowerCase(),
+            paymentMethod: o?.payment_method || o?.paymentMethod || '—',
+            paymentStatus: (o?.payment_status || o?.paymentStatus || 'pending').toLowerCase(),
+            items: items.map((it) => ({
+              name: it?.product_name || it?.productName || it?.name || 'Item',
+              quantity: it?.quantity || 0,
+              price: Number(it?.unit_price ?? it?.unitPrice ?? 0),
+              image: ''
+            })),
+            shippingAddress: {
+              street: shippingAddress?.street || shippingAddress?.address1 || '',
+              city: shippingAddress?.city || '',
+              state: shippingAddress?.state || '',
+              zip: shippingAddress?.zip || shippingAddress?.postalCode || '',
+              country: shippingAddress?.country || ''
+            },
+            trackingNumber: o?.tracking_number || o?.trackingNumber || '',
+            estimatedDelivery: o?.estimated_delivery || o?.estimatedDelivery || '',
+            deliveredOn: o?.actual_delivery || o?.deliveredOn || ''
+          };
+        });
+
+        setOrders(mapped);
+        setFilteredOrders(mapped);
+      } catch (e) {
+        const message =
+          e?.response?.data?.message ||
+          e?.response?.data?.error ||
+          e?.message ||
+          'Failed to load orders';
+        setOrders([]);
+        setFilteredOrders([]);
+        setError(message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSellerOrders();
+  }, [token]);
 
   useEffect(() => {
     let filtered = orders;
@@ -287,8 +239,12 @@ const Orders = () => {
   }
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      {/* Header */}
+    <Box sx={{ p: 3 }}>
+      {error ? (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      ) : null}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" fontWeight="bold">
           Orders Management ({filteredOrders.length})

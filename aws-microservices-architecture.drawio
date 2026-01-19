@@ -1,0 +1,235 @@
+<mxfile host="app.diagrams.net" modified="2026-01-19T00:00:00.000Z" agent="Cascade" version="22.1.0" type="device">
+  <diagram id="aws-arch-all-services" name="Production Architecture (All Backend Services)">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="Production Architecture (Microservices + AWS) - All Backend Services" style="text;html=1;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="20" width="980" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Users -->
+        <mxCell id="users" value="Users" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="140" width="150" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Edge / Ingress -->
+        <mxCell id="edge" value="Edge / Routing&#xa;WAF / ALB / Nginx Ingress" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="120" width="220" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Frontends group -->
+        <mxCell id="feGroup" value="Frontends" style="swimlane;html=1;rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="560" y="90" width="430" height="170" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="admin" value="Admin App" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" vertex="1" parent="feGroup">
+          <mxGeometry x="20" y="60" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="buyer" value="Buyer App" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" vertex="1" parent="feGroup">
+          <mxGeometry x="155" y="60" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="seller" value="Seller App" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" vertex="1" parent="feGroup">
+          <mxGeometry x="290" y="60" width="120" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- S3 -->
+        <mxCell id="s3" value="S3&#xa;(Static Assets)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="120" width="200" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- API Gateway -->
+        <mxCell id="api" value="API Gateway (Node/Express)&#xa;backend/api-gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="300" width="430" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Lambda -->
+        <mxCell id="lambda" value="AWS Lambda&#xa;REST APIs / Jobs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="300" width="240" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Services group -->
+        <mxCell id="svcGroup" value="Microservices (EKS / Containers)" style="swimlane;html=1;rounded=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;startSize=30;" vertex="1" parent="1">
+          <mxGeometry x="260" y="420" width="1080" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- Row 1 -->
+        <mxCell id="auth" value="Auth Service&#xa;backend/auth-service (or shared auth)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="svcGroup">
+          <mxGeometry x="20" y="60" width="240" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="cart" value="Cart Service&#xa;backend/cart-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="svcGroup">
+          <mxGeometry x="280" y="60" width="240" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="order" value="Order Service&#xa;backend/order-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="svcGroup">
+          <mxGeometry x="540" y="60" width="240" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="notif" value="Notification Service&#xa;backend/notification-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="svcGroup">
+          <mxGeometry x="800" y="60" width="240" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Row 2 -->
+        <mxCell id="payment" value="Payment Service&#xa;backend/payment-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="svcGroup">
+          <mxGeometry x="20" y="150" width="240" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="product" value="Product Service&#xa;backend/product-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="svcGroup">
+          <mxGeometry x="280" y="150" width="240" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="review" value="Review Service&#xa;backend/review-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="svcGroup">
+          <mxGeometry x="540" y="150" width="240" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="search" value="Search Service&#xa;backend/search-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" vertex="1" parent="svcGroup">
+          <mxGeometry x="800" y="150" width="240" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Databases -->
+        <mxCell id="mongo" value="MongoDB" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="520" width="160" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sql" value="SQL (Postgres)" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="520" width="170" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- Messaging -->
+        <mxCell id="sqs" value="SQS Queue" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="780" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sns" value="SNS Topics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="820" y="780" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="channels" value="Email / SMS / Push" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="780" width="240" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Observability -->
+        <mxCell id="cw" value="CloudWatch&#xa;Logs / Metrics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="780" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ingest" value="AOSS Ingestion" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="780" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="aoss" value="OpenSearch Serverless (AOSS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="890" width="260" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="e1" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="users" target="edge">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e2" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="edge" target="feGroup">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e3" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="feGroup" target="api">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e4" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="feGroup" target="s3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e5" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="api" target="svcGroup">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- API -> each service -->
+        <mxCell id="eApiAuth" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="api" target="auth">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eApiCart" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="api" target="cart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eApiOrder" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="api" target="order">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eApiNotif" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="api" target="notif">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eApiPayment" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="api" target="payment">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eApiProduct" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="api" target="product">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eApiReview" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="api" target="review">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eApiSearch" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="api" target="search">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- DB links (assumed based on common mapping + your earlier diagram) -->
+        <mxCell id="eAuthMongo" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="auth" target="mongo">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eCartMongo" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="cart" target="mongo">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eProductMongo" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="product" target="mongo">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eReviewMongo" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="review" target="mongo">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="eOrderSql" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="order" target="sql">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eNotifSql" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="notif" target="sql">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ePaymentSql" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="payment" target="sql">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Search -> AOSS -->
+        <mxCell id="eSearchAoss" value="index/search" style="endArrow=block;html=1;strokeColor=#333333;fontSize=11;" edge="1" parent="1" source="search" target="aoss">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Async + notifications -->
+        <mxCell id="eOrderSqs" value="async events" style="endArrow=block;html=1;strokeColor=#333333;fontSize=11;" edge="1" parent="1" source="order" target="sqs">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eSqsNotif" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="sqs" target="notif">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eNotifSns" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="notif" target="sns">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eSnsCh" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="sns" target="channels">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Observability -->
+        <mxCell id="eSvcCw" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="svcGroup" target="cw">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eCwIngest" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="cw" target="ingest">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eIngestAoss" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="ingest" target="aoss">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Lambda -->
+        <mxCell id="eLambdaApi" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="lambda" target="api">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eLambdaSqs" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="lambda" target="sqs">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="eLambdaAoss" style="endArrow=block;html=1;strokeColor=#333333;" edge="1" parent="1" source="lambda" target="aoss">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

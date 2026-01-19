@@ -27,7 +27,7 @@ class ProductController {
         stock: 100,
         sku: 'MOCK-HEADPHONES',
         images: [{ url: 'https://picsum.photos/seed/headphones/300/200.jpg' }],
-        sellerId: { firstName: 'John', lastName: 'Doe', email: 'john@example.com' },
+        sellerId: { firstName: 'Electronics', lastName: 'Seller', email: 'electronics@sellers.com' },
         status: 'active',
         ratings: { average: 4.5, count: 128 },
         createdAt: new Date()
@@ -41,7 +41,7 @@ class ProductController {
         stock: 75,
         sku: 'MOCK-SMARTWATCH',
         images: [{ url: 'https://picsum.photos/seed/smartwatch/300/200.jpg' }],
-        sellerId: { firstName: 'Jane', lastName: 'Smith', email: 'jane@example.com' },
+        sellerId: { firstName: 'Electronics', lastName: 'Seller', email: 'electronics@sellers.com' },
         status: 'active',
         ratings: { average: 4.2, count: 89 },
         createdAt: new Date()
@@ -69,7 +69,7 @@ class ProductController {
         stock: 150,
         sku: 'MOCK-YOGAMAT',
         images: [{ url: 'https://picsum.photos/seed/yogamat/300/200.jpg' }],
-        sellerId: { firstName: 'Sarah', lastName: 'Williams', email: 'sarah@example.com' },
+        sellerId: { firstName: 'Sports', lastName: 'Seller', email: 'sports@sellers.com' },
         status: 'active',
         ratings: { average: 4.7, count: 203 },
         createdAt: new Date()
@@ -81,9 +81,9 @@ class ProductController {
         price: 89.99,
         category: 'Home',
         stock: 60,
-        sku: 'MOCK-COFFEE',
+        sku: 'MOCK-COFFEEMAKER',
         images: [{ url: 'https://picsum.photos/seed/coffee/300/200.jpg' }],
-        sellerId: { firstName: 'David', lastName: 'Brown', email: 'david@example.com' },
+        sellerId: { firstName: 'Crockery', lastName: 'Seller', email: 'crockery@sellers.com' },
         status: 'active',
         ratings: { average: 4.3, count: 156 },
         createdAt: new Date()
@@ -98,7 +98,7 @@ class ProductController {
         stock: 80,
         sku: 'MOCK-SHOES',
         images: [{ url: 'https://picsum.photos/seed/shoes/300/200.jpg' }],
-        sellerId: { firstName: 'Lisa', lastName: 'Davis', email: 'lisa@example.com' },
+        sellerId: { firstName: 'Sports', lastName: 'Seller', email: 'sports@sellers.com' },
         status: 'active',
         ratings: { average: 4.6, count: 92 },
         createdAt: new Date()
@@ -112,7 +112,7 @@ class ProductController {
         stock: 120,
         sku: 'MOCK-BACKPACK',
         images: [{ url: 'https://picsum.photos/seed/backpack/300/200.jpg' }],
-        sellerId: { firstName: 'Tom', lastName: 'Miller', email: 'tom@example.com' },
+        sellerId: { firstName: 'Accessories', lastName: 'Seller', email: 'accessories@sellers.com' },
         status: 'active',
         ratings: { average: 4.4, count: 67 },
         createdAt: new Date()
@@ -126,7 +126,7 @@ class ProductController {
         stock: 180,
         sku: 'MOCK-MOUSE',
         images: [{ url: 'https://picsum.photos/seed/mouse/300/200.jpg' }],
-        sellerId: { firstName: 'Emma', lastName: 'Wilson', email: 'emma@example.com' },
+        sellerId: { firstName: 'Electronics', lastName: 'Seller', email: 'electronics@sellers.com' },
         status: 'active',
         ratings: { average: 4.1, count: 134 },
         createdAt: new Date()
@@ -188,7 +188,7 @@ class ProductController {
             category: "Electronics",
             stock: 100,
             images: [{ url: "https://picsum.photos/seed/headphones/300/200.jpg" }],
-            sellerId: { firstName: "John", lastName: "Doe", email: "john@example.com" },
+            sellerId: { firstName: "Electronics", lastName: "Seller", email: "electronics@sellers.com" },
             status: "active",
             ratings: { average: 4.5, count: 128 },
             createdAt: new Date()
@@ -201,7 +201,7 @@ class ProductController {
             category: "Electronics",
             stock: 75,
             images: [{ url: "https://picsum.photos/seed/smartwatch/300/200.jpg" }],
-            sellerId: { firstName: "Jane", lastName: "Smith", email: "jane@example.com" },
+            sellerId: { firstName: "Electronics", lastName: "Seller", email: "electronics@sellers.com" },
             status: "active",
             ratings: { average: 4.2, count: 89 },
             createdAt: new Date()
@@ -227,7 +227,7 @@ class ProductController {
             category: "Sports",
             stock: 150,
             images: [{ url: "https://picsum.photos/seed/yogamat/300/200.jpg" }],
-            sellerId: { firstName: "Sarah", lastName: "Williams", email: "sarah@example.com" },
+            sellerId: { firstName: "Sports", lastName: "Seller", email: "sports@sellers.com" },
             status: "active",
             ratings: { average: 4.7, count: 203 },
             createdAt: new Date()
@@ -240,7 +240,7 @@ class ProductController {
             category: "Home",
             stock: 60,
             images: [{ url: "https://picsum.photos/seed/coffee/300/200.jpg" }],
-            sellerId: { firstName: "David", lastName: "Brown", email: "david@example.com" },
+            sellerId: { firstName: "Crockery", lastName: "Seller", email: "crockery@sellers.com" },
             status: "active",
             ratings: { average: 4.3, count: 156 },
             createdAt: new Date()
@@ -254,7 +254,7 @@ class ProductController {
             category: "Sports",
             stock: 80,
             images: [{ url: "https://picsum.photos/seed/shoes/300/200.jpg" }],
-            sellerId: { firstName: "Lisa", lastName: "Davis", email: "lisa@example.com" },
+            sellerId: { firstName: "Sports", lastName: "Seller", email: "sports@sellers.com" },
             status: "active",
             ratings: { average: 4.6, count: 92 },
             createdAt: new Date()
@@ -267,7 +267,7 @@ class ProductController {
             category: "Accessories",
             stock: 120,
             images: [{ url: "https://picsum.photos/seed/backpack/300/200.jpg" }],
-            sellerId: { firstName: "Tom", lastName: "Miller", email: "tom@example.com" },
+            sellerId: { firstName: "Accessories", lastName: "Seller", email: "accessories@sellers.com" },
             status: "active",
             ratings: { average: 4.4, count: 67 },
             createdAt: new Date()

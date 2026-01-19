@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Paper,
@@ -12,7 +12,9 @@ import {
   Chip,
   IconButton,
   TextField,
-  InputAdornment
+  InputAdornment,
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import {
   Search,
@@ -21,37 +23,51 @@ import {
   CheckCircle,
   Cancel
 } from '@mui/icons-material';
+import { ordersAPI } from '../../services/api';
 
 const Orders = () => {
-  const [orders] = useState([
-    {
-      id: 'ORD-001',
-      customer: 'John Doe',
-      seller: 'Tech Store',
-      date: '2024-01-15',
-      total: 299.99,
-      status: 'processing',
-      items: 3
-    },
-    {
-      id: 'ORD-002',
-      customer: 'Jane Smith',
-      seller: 'Fashion Hub',
-      date: '2024-01-14',
-      total: 149.99,
-      status: 'shipped',
-      items: 2
-    },
-    {
-      id: 'ORD-003',
-      customer: 'Bob Johnson',
-      seller: 'Gadget World',
-      date: '2024-01-13',
-      total: 89.99,
-      status: 'delivered',
-      items: 1
-    }
-  ]);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchOrders = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const response = await ordersAPI.getAllOrders({ page: 1, limit: 50 });
+        const apiOrders = response.data?.orders || [];
+        if (!mounted) return;
+        setOrders(apiOrders);
+      } catch (err) {
+        if (!mounted) return;
+        const message = err?.response?.data?.message || err?.message || 'Failed to fetch orders';
+        setError(message);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchOrders();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const filteredOrders = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return orders;
+
+    return orders.filter((o) => {
+      const orderId = String(o.order_number || o.id || '').toLowerCase();
+      const customer = String(o.user_id || '').toLowerCase();
+      const status = String(o.status || '').toLowerCase();
+      return orderId.includes(q) || customer.includes(q) || status.includes(q);
+    });
+  }, [orders, search]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -74,10 +90,18 @@ const Orders = () => {
         Orders Management
       </Typography>
 
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
       <Box sx={{ mb: 2 }}>
         <TextField
           fullWidth
           placeholder="Search orders..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -87,6 +111,12 @@ const Orders = () => {
           }}
         />
       </Box>
+
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
 
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }}>
@@ -104,16 +134,22 @@ const Orders = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map((order) => (
-                <TableRow key={order.id} hover>
+              {filteredOrders.map((order) => (
+                <TableRow key={order.order_number || order.id} hover>
                   <TableCell component="th" scope="row">
-                    {order.id}
+                    {order.order_number || order.id}
                   </TableCell>
-                  <TableCell>{order.customer}</TableCell>
-                  <TableCell>{order.seller}</TableCell>
-                  <TableCell>{order.date}</TableCell>
-                  <TableCell>{order.items}</TableCell>
-                  <TableCell>${order.total}</TableCell>
+                  <TableCell>{order.user_id || '-'}</TableCell>
+                  <TableCell>-</TableCell>
+                  <TableCell>
+                    {order.created_at ? new Date(order.created_at).toLocaleDateString() : '-'}
+                  </TableCell>
+                  <TableCell>{Array.isArray(order.items) ? order.items.length : 0}</TableCell>
+                  <TableCell>
+                    {typeof order.total_amount === 'number'
+                      ? `$${order.total_amount}`
+                      : (order.total_amount ? `$${order.total_amount}` : '-')}
+                  </TableCell>
                   <TableCell>
                     <Chip
                       label={order.status}
@@ -147,6 +183,7 @@ const Orders = () => {
           </Table>
         </TableContainer>
       </Paper>
+      )}
     </Box>
   );
 };

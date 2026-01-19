@@ -1,8 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
   Paper,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -13,7 +21,9 @@ import {
   Chip,
   IconButton,
   TextField,
-  InputAdornment
+  InputAdornment,
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import {
   Search,
@@ -23,37 +33,117 @@ import {
   Block,
   CheckCircle
 } from '@mui/icons-material';
+import { adminUsersAPI } from '../../services/api';
 
 const Users = () => {
-  const [users] = useState([
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john@example.com',
-      role: 'buyer',
-      status: 'active',
-      registered: '2024-01-15',
-      orders: 23
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      role: 'seller',
-      status: 'active',
-      registered: '2024-01-10',
-      orders: 156
-    },
-    {
-      id: 3,
-      name: 'Bob Johnson',
-      email: 'bob@example.com',
-      role: 'buyer',
-      status: 'suspended',
-      registered: '2024-01-05',
-      orders: 8
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+
+  const [createOpen, setCreateOpen] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState('');
+  const [createForm, setCreateForm] = useState({
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    role: 'buyer'
+  });
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchUsers = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const response = await adminUsersAPI.listUsers();
+        const apiUsers = response.data?.users || [];
+        if (!mounted) return;
+        setUsers(apiUsers);
+      } catch (err) {
+        if (!mounted) return;
+        const message = err?.response?.data?.message || err?.message || 'Failed to fetch users';
+        setError(message);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchUsers();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const refetchUsers = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await adminUsersAPI.listUsers();
+      const apiUsers = response.data?.users || [];
+      setUsers(apiUsers);
+    } catch (err) {
+      const message = err?.response?.data?.message || err?.message || 'Failed to fetch users';
+      setError(message);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  const handleOpenCreate = () => {
+    setCreateError('');
+    setCreateForm({
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      role: 'buyer'
+    });
+    setCreateOpen(true);
+  };
+
+  const handleCloseCreate = () => {
+    if (createLoading) return;
+    setCreateOpen(false);
+  };
+
+  const handleCreateSubmit = async () => {
+    setCreateLoading(true);
+    setCreateError('');
+    try {
+      await adminUsersAPI.createUser({
+        email: createForm.email,
+        password: createForm.password,
+        firstName: createForm.firstName,
+        lastName: createForm.lastName,
+        role: createForm.role,
+        isActive: true
+      });
+
+      setCreateOpen(false);
+      await refetchUsers();
+    } catch (err) {
+      const message = err?.response?.data?.message || err?.message || 'Failed to create user';
+      setCreateError(message);
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
+  const filteredUsers = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return users;
+
+    return users.filter((u) => {
+      const name = `${u.firstName || ''} ${u.lastName || ''}`.toLowerCase();
+      const email = String(u.email || '').toLowerCase();
+      const role = String(u.role || '').toLowerCase();
+      return name.includes(q) || email.includes(q) || role.includes(q);
+    });
+  }, [users, search]);
 
   const getRoleColor = (role) => {
     switch (role) {
@@ -90,6 +180,7 @@ const Users = () => {
         <Button
           variant="contained"
           sx={{ borderRadius: 2 }}
+          onClick={handleOpenCreate}
         >
           Add User
         </Button>
@@ -99,6 +190,8 @@ const Users = () => {
         <TextField
           fullWidth
           placeholder="Search users..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -108,6 +201,18 @@ const Users = () => {
           }}
         />
       </Box>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
 
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }}>
@@ -124,10 +229,10 @@ const Users = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <TableRow key={user.id} hover>
                   <TableCell component="th" scope="row">
-                    {user.name}
+                    {`${user.firstName || ''} ${user.lastName || ''}`.trim() || '-'}
                   </TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
@@ -139,13 +244,13 @@ const Users = () => {
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={user.status}
-                      color={getStatusColor(user.status)}
+                      label={user.isActive ? 'active' : 'suspended'}
+                      color={getStatusColor(user.isActive ? 'active' : 'suspended')}
                       size="small"
                     />
                   </TableCell>
-                  <TableCell>{user.registered}</TableCell>
-                  <TableCell>{user.orders}</TableCell>
+                  <TableCell>{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}</TableCell>
+                  <TableCell>-</TableCell>
                   <TableCell align="right">
                     <IconButton size="small">
                       <Visibility />
@@ -153,7 +258,7 @@ const Users = () => {
                     <IconButton size="small">
                       <Edit />
                     </IconButton>
-                    {user.status === 'active' ? (
+                    {user.isActive ? (
                       <IconButton size="small" color="error">
                         <Block />
                       </IconButton>
@@ -172,6 +277,73 @@ const Users = () => {
           </Table>
         </TableContainer>
       </Paper>
+      )}
+
+      <Dialog open={createOpen} onClose={handleCloseCreate} maxWidth="sm" fullWidth>
+        <DialogTitle>Add User</DialogTitle>
+        <DialogContent>
+          {createError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {createError}
+            </Alert>
+          )}
+
+          <Box sx={{ display: 'grid', gap: 2, mt: 1 }}>
+            <TextField
+              label="Email"
+              type="email"
+              value={createForm.email}
+              onChange={(e) => setCreateForm((p) => ({ ...p, email: e.target.value }))}
+              fullWidth
+              required
+            />
+
+            <TextField
+              label="Password"
+              type="password"
+              value={createForm.password}
+              onChange={(e) => setCreateForm((p) => ({ ...p, password: e.target.value }))}
+              fullWidth
+              required
+            />
+
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
+              <TextField
+                label="First Name"
+                value={createForm.firstName}
+                onChange={(e) => setCreateForm((p) => ({ ...p, firstName: e.target.value }))}
+                fullWidth
+              />
+
+              <TextField
+                label="Last Name"
+                value={createForm.lastName}
+                onChange={(e) => setCreateForm((p) => ({ ...p, lastName: e.target.value }))}
+                fullWidth
+              />
+            </Box>
+
+            <FormControl fullWidth>
+              <InputLabel id="create-user-role">Role</InputLabel>
+              <Select
+                labelId="create-user-role"
+                label="Role"
+                value={createForm.role}
+                onChange={(e) => setCreateForm((p) => ({ ...p, role: e.target.value }))}
+              >
+                <MenuItem value="buyer">buyer</MenuItem>
+                <MenuItem value="seller">seller</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCreate} disabled={createLoading}>Cancel</Button>
+          <Button variant="contained" onClick={handleCreateSubmit} disabled={createLoading}>
+            {createLoading ? 'Creating...' : 'Create'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

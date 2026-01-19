@@ -12,6 +12,7 @@ const logger = require('/app/shared/utils/logger');
 const { Product, User, Review, Cart, Wishlist } = require('/app/shared/models');
 const proxyRoutes = require('./routes/proxy');
 const authRoutes = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -68,6 +69,8 @@ app.use(morgan('combined', { stream: { write: message => logger.info(message.tri
 // Proxied routes should stream through to downstream services.
 app.use('/api/auth', express.json({ limit: '10mb' }));
 app.use('/api/auth', express.urlencoded({ extended: true, limit: '10mb' }));
+app.use('/api/admin', express.json({ limit: '10mb' }));
+app.use('/api/admin', express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -81,6 +84,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api', proxyRoutes);
 
 // 404 handler

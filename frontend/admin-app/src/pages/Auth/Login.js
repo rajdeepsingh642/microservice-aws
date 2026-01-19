@@ -11,6 +11,8 @@ import {
   Link
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
+import { authAPI } from '../../services/api';
+import { loginFailure, loginStart, loginSuccess } from '../../store/slices/authSlice';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -37,31 +39,40 @@ const Login = () => {
     setError('');
 
     try {
-      // Mock admin login - replace with actual API call
-      if (formData.email === 'admin@example.com' && formData.password === 'admin123') {
-        const mockUser = {
-          id: 1,
-          email: formData.email,
-          firstName: 'Admin',
-          lastName: 'User',
-          role: 'admin'
-        };
-        
-        const mockToken = 'mock-admin-jwt-token';
+      dispatch(loginStart());
+      const response = await authAPI.login(formData);
 
-        localStorage.setItem('token', mockToken);
-        
-        dispatch({
-          type: 'auth/login',
-          payload: { user: mockUser, token: mockToken }
-        });
-        
-        navigate('/dashboard');
-      } else {
-        setError('Invalid email or password');
+      const user = response.data?.user;
+      const accessToken = response.data?.tokens?.accessToken;
+      const refreshToken = response.data?.tokens?.refreshToken;
+
+      if (!user || !accessToken || !refreshToken) {
+        throw new Error('Invalid login response');
       }
+
+      if (user.role !== 'admin') {
+        setError('Access denied: admin account required');
+        dispatch(loginFailure('Access denied: admin account required'));
+        return;
+      }
+
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      dispatch(
+        loginSuccess({
+          user,
+          token: accessToken,
+          refreshToken
+        })
+      );
+
+      navigate('/dashboard');
     } catch (err) {
-      setError('Login failed. Please try again.');
+      const message = err?.response?.data?.message || err?.message || 'Login failed. Please try again.';
+      setError(message);
+      dispatch(loginFailure(message));
     } finally {
       setLoading(false);
     }

@@ -70,6 +70,7 @@ const validateProductCreation = [
     .notEmpty()
     .withMessage('Category is required'),
   body('sku')
+    .optional()
     .trim()
     .isLength({ min: 3, max: 50 })
     .withMessage('SKU must be between 3 and 50 characters'),

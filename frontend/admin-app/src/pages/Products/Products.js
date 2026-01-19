@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Paper,
   Table,
   TableBody,
@@ -13,7 +17,9 @@ import {
   Chip,
   IconButton,
   TextField,
-  InputAdornment
+  InputAdornment,
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import {
   Search,
@@ -24,37 +30,120 @@ import {
   Block,
   CheckCircle
 } from '@mui/icons-material';
+import { productsAPI } from '../../services/api';
 
 const Products = () => {
-  const [products] = useState([
-    {
-      id: 1,
-      name: 'Wireless Headphones',
-      seller: 'Tech Store',
-      category: 'Electronics',
-      price: 99.99,
-      stock: 45,
-      status: 'active'
-    },
-    {
-      id: 2,
-      name: 'Smart Watch',
-      seller: 'Fashion Hub',
-      category: 'Electronics',
-      price: 299.99,
-      stock: 23,
-      status: 'active'
-    },
-    {
-      id: 3,
-      name: 'Laptop Stand',
-      seller: 'Gadget World',
-      category: 'Accessories',
-      price: 49.99,
-      stock: 0,
-      status: 'out of stock'
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+
+  const [createOpen, setCreateOpen] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState('');
+  const [createForm, setCreateForm] = useState({
+    name: '',
+    description: '',
+    category: '',
+    price: '',
+    inventoryQuantity: ''
+  });
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const response = await productsAPI.getAllProducts({ page: 1, limit: 100 });
+        const apiProducts = response.data?.products || [];
+        if (!mounted) return;
+        setProducts(apiProducts);
+      } catch (err) {
+        if (!mounted) return;
+        const message = err?.response?.data?.message || err?.message || 'Failed to fetch products';
+        setError(message);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchProducts();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const refetchProducts = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await productsAPI.getAllProducts({ page: 1, limit: 100 });
+      const apiProducts = response.data?.products || [];
+      setProducts(apiProducts);
+    } catch (err) {
+      const message = err?.response?.data?.message || err?.message || 'Failed to fetch products';
+      setError(message);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  const handleOpenCreate = () => {
+    setCreateError('');
+    setCreateForm({
+      name: '',
+      description: '',
+      category: '',
+      price: '',
+      inventoryQuantity: ''
+    });
+    setCreateOpen(true);
+  };
+
+  const handleCloseCreate = () => {
+    if (createLoading) return;
+    setCreateOpen(false);
+  };
+
+  const handleCreateSubmit = async () => {
+    setCreateLoading(true);
+    setCreateError('');
+    try {
+      await productsAPI.createProduct({
+        name: createForm.name,
+        description: createForm.description,
+        category: createForm.category,
+        price: Number(createForm.price),
+        inventory: {
+          quantity: Number(createForm.inventoryQuantity)
+        },
+        images: [],
+        status: 'active'
+      });
+
+      setCreateOpen(false);
+      await refetchProducts();
+    } catch (err) {
+      const message = err?.response?.data?.message || err?.message || 'Failed to create product';
+      setCreateError(message);
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
+  const filteredProducts = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return products;
+    return products.filter((p) => {
+      const name = String(p.name || '').toLowerCase();
+      const category = String(p.category || '').toLowerCase();
+      const sku = String(p.sku || '').toLowerCase();
+      const sellerEmail = String(p.sellerId?.email || '').toLowerCase();
+      return name.includes(q) || category.includes(q) || sku.includes(q) || sellerEmail.includes(q);
+    });
+  }, [products, search]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -62,7 +151,9 @@ const Products = () => {
         return 'success';
       case 'inactive':
         return 'warning';
-      case 'out of stock':
+      case 'draft':
+        return 'default';
+      case 'archived':
         return 'error';
       default:
         return 'default';
@@ -79,6 +170,7 @@ const Products = () => {
           variant="contained"
           startIcon={<ShoppingBag />}
           sx={{ borderRadius: 2 }}
+          onClick={handleOpenCreate}
         >
           Add Product
         </Button>
@@ -88,6 +180,8 @@ const Products = () => {
         <TextField
           fullWidth
           placeholder="Search products..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -97,6 +191,18 @@ const Products = () => {
           }}
         />
       </Box>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
 
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }}>
@@ -113,15 +219,15 @@ const Products = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id} hover>
+              {filteredProducts.map((product) => (
+                <TableRow key={product._id} hover>
                   <TableCell component="th" scope="row">
                     {product.name}
                   </TableCell>
-                  <TableCell>{product.seller}</TableCell>
+                  <TableCell>{product.sellerId?.email || '-'}</TableCell>
                   <TableCell>{product.category}</TableCell>
                   <TableCell>${product.price}</TableCell>
-                  <TableCell>{product.stock}</TableCell>
+                  <TableCell>{product.inventory?.quantity ?? '-'}</TableCell>
                   <TableCell>
                     <Chip
                       label={product.status}
@@ -155,6 +261,72 @@ const Products = () => {
           </Table>
         </TableContainer>
       </Paper>
+      )}
+
+      <Dialog open={createOpen} onClose={handleCloseCreate} maxWidth="sm" fullWidth>
+        <DialogTitle>Add Product</DialogTitle>
+        <DialogContent>
+          {createError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {createError}
+            </Alert>
+          )}
+
+          <Box sx={{ display: 'grid', gap: 2, mt: 1 }}>
+            <TextField
+              label="Name"
+              value={createForm.name}
+              onChange={(e) => setCreateForm((p) => ({ ...p, name: e.target.value }))}
+              fullWidth
+              required
+            />
+
+            <TextField
+              label="Description"
+              value={createForm.description}
+              onChange={(e) => setCreateForm((p) => ({ ...p, description: e.target.value }))}
+              fullWidth
+              multiline
+              minRows={3}
+              required
+            />
+
+            <TextField
+              label="Category"
+              value={createForm.category}
+              onChange={(e) => setCreateForm((p) => ({ ...p, category: e.target.value }))}
+              fullWidth
+              required
+            />
+
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
+              <TextField
+                label="Price"
+                type="number"
+                value={createForm.price}
+                onChange={(e) => setCreateForm((p) => ({ ...p, price: e.target.value }))}
+                fullWidth
+                required
+              />
+
+              <TextField
+                label="Inventory Quantity"
+                type="number"
+                value={createForm.inventoryQuantity}
+                onChange={(e) => setCreateForm((p) => ({ ...p, inventoryQuantity: e.target.value }))}
+                fullWidth
+                required
+              />
+            </Box>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCreate} disabled={createLoading}>Cancel</Button>
+          <Button variant="contained" onClick={handleCreateSubmit} disabled={createLoading}>
+            {createLoading ? 'Creating...' : 'Create'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

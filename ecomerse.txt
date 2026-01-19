@@ -1,0 +1,82 @@
+ curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email":"seller1@test.com",
+    "password":"Seller@12345",
+    "firstName":"Seller",
+    "lastName":"One",
+    "role":"seller"
+  }'
+
+
+
+curl http://localhost:3000/api/auth/verify-email/<TOKEN>
+
+
+
+
+
+curl -i -X POST http://localhost:3000/api/orders \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMDY4Yjc0Ny1mYWM1LTRhMGQtOTM4NC0wYTkxYTZmNjU1NjkiLCJlbWFpbCI6ImN1c3RvbWVyMkBleGFtcGxlLmNvbSIsInJvbGUiOiJidXllciIsImlhdCI6MTc2ODU1NjAyNCwiZXhwIjoxNzY4NTU2OTI0fQ.mHWOuG3slWsDKSwiQdCV034IrS-4NFZew8x8qHERVcE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "items":[{"productId":"mock1","quantity":1}],
+    "shippingAddress":{"street":"124/125","city":"Jaipur","zipCode":"302012"},
+    "paymentMethod":"credit_card"
+  }'
+  
+  #########################
+root@ubuntu:/home/rajdeep/Project# curl -X POST "http://localhost:3000/api/auth/register" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email":"customer1@test.com",
+    "password":"Customer@123",
+    "firstName":"Customer",
+    "lastName":"One",
+    "role":"buyer"
+  }'
+buyer app:
+customer1@test.com
+Customer@123
+
+seller app:
+seller1@test.com
+Seller@12345
+###########################################################################
+/Project$ curl -X POST http://localhost:3000/api/auth/dev/set-role \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: your-internal-service-api-key" \
+  -d '{"email":"john@example.com","role":"seller"}'
+{"message":"Role updated successfully","user":{"id":"abff608f-0503-423e-b417-ad913553e9df","email":"john@example.com","firstName":"John","lastName":"Doe","role":"seller","isActive":true}}rajdeep@ubuntu:~/Project$ curl -X POST http://localhost:3000/api/auth/login \                curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"john@example.com","password":"Test@1234"}'
+{"message":"Login successful","user":{"id":"abff608f-0503-423e-b417-ad913553e9df","email":"john@example.com","firstName":"John","lastName":"Doe","role":"seller","isActive":true},"tokens":{"accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhYmZmNjA4Zi0wNTAzLTQyM2UtYjQxNy1hZDkxMzU1M2U5ZGYiLCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzY4ODE1OTc0LCJleHAiOjE3Njg4MTY4NzR9.qxKaqrhMRDaZQv-xDGTQlCl35h7dCWPLWqsEvBBHx84","refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhYmZmNjA4Zi0wNTAzLTQyM2UtYjQxNy1hZDkxMzU1M2U5ZGYiLCJpYXQiOjE3Njg4MTU5NzQsImV4cCI6MTc2OTQyMDc3NH0.PPjgCwfmMZnZfL5pn4JUYkhNtbE_L96JugekxUD8-j0"}}rajdeep@ubuntu:~/Project$ 
+
+
+
+
+
+
+
+~/Project$ curl -X POST http://localhost:3000/api/aurajdeep@ubuntu:~/Project$ curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email":"electronics@sellers.com",
+    "password":"Test@1234",
+    "firstName":"Electronics",
+    "lastName":"Seller",
+    "role":"seller",
+    "phone":"9999999999",
+    "address":{"street":"NA","city":"NA","state":"NA","zipCode":"000000","country":"IN"}
+  }'
+{"message":"User registered successfully","user":{"id":"5bd149e1-4001-444f-b6b1-18831ecf181a","email":"electronics@sellers.com","firstName":"Electronics","lastName":"Seller","role":"seller","isActive":true},"tokens":{"accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1YmQxNDllMS00MDAxLTQ0NGYtYjZiMS0xODgzMWVjZjE4MWEiLCJlbWFpbCI6ImVsZWN0cm9uaWNzQHNlbGxlcnMuY29tIiwicm9sZSI6InNlbGxlciIsImlhdCI6MTc2ODgxNjU3NCwiZXhwIjoxNzY4ODE3NDc0fQ.TDrgs49Aym3LpQaPkjkDd--TcmJ51jU4N3TNECx9IFU","refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1YmQxNDllMS00MDAxLTQ0NGYtYjZiMS0xODgzMWVjZjE4MWEiLCJpYXQiOjE3Njg4MTY1NzQsImV4cCI6MTc2OTQyMTM3NH0.byt8-6NCgHO-ZIA-8aO33rfwrZZ6kMDNjPabY0Y1rF4"}}rajdeep@ubuntu:~/Project$ curl -X POST http://localhost:3000/api/auth/dev/set-role \curl -X POST http://localhost:3000/api/auth/dev/set-role \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: your-internal-service-api-key" \
+  -d '{"email":"electronics@sellers.com","role":"seller"}'
+{"message":"Role updated successfully","user":{"id":"5bd149e1-4001-444f-b6b1-18831ecf181a","email":"electronics@sellers.com","firstName":"Electronics","lastName":"Seller","role":"seller","isActive":true}}rajdeep@ubuntu:~/Project$ curl -X POST http://localhost:3000/api/auth/login curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"electronics@sellers.com","password":"Test@1234"}'
+{"message":"Login successful","user":{"id":"5bd149e1-4001-444f-b6b1-18831ecf181a","email":"electronics@sellers.com","firstName":"Electronics","lastName":"Seller","role":"seller","isActive":true},"tokens":{"accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1YmQxNDllMS00MDAxLTQ0NGYtYjZiMS0xODgzMWVjZjE4MWEiLCJlbWFpbCI6ImVsZWN0cm9uaWNzQHNlbGxlcnMuY29tIiwicm9sZSI6InNlbGxlciIsImlhdCI6MTc2ODgxNjU5MiwiZXhwIjoxNzY4ODE3NDkyfQ.ngXvUdhGcEGkgA8yvCP2gMjSPv9arZeQn0KAXAQk14A","
+
+
+

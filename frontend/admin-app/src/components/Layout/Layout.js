@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import {
   AppBar,
   Box,
@@ -49,6 +49,8 @@ const Layout = ({ children }) => {
   const handleLogout = () => {
     handleMenuClose();
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
     navigate('/login');
   };
 
@@ -182,7 +184,7 @@ const Layout = ({ children }) => {
         }}
       >
         <Toolbar />
-        {children}
+        {children || <Outlet />}
       </Box>
     </Box>
   );

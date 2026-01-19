@@ -10,6 +10,7 @@ import { Toaster } from 'react-hot-toast';
 import App from './App';
 import ErrorBoundary from './ErrorBoundary';
 import { store } from './store/store';
+import { hydrateFromStorage } from './store/slices/authSlice';
 import './index.css';
 
 const theme = createTheme({
@@ -31,6 +32,19 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const token = localStorage.getItem('token');
+const refreshToken = localStorage.getItem('refreshToken');
+const userRaw = localStorage.getItem('user');
+const user = userRaw ? JSON.parse(userRaw) : null;
+
+store.dispatch(
+  hydrateFromStorage({
+    user,
+    token,
+    refreshToken
+  })
+);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

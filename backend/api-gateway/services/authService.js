@@ -48,7 +48,7 @@ class AuthService {
       const newUser = {
         _id: uuidv4(),
         ...userData,
-        isActive: !requireEmailVerification, // Require email verification
+        isActive: typeof userData.isActive === 'boolean' ? userData.isActive : !requireEmailVerification, // Require email verification
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -101,6 +101,28 @@ class AuthService {
       return users[userIndex];
     } catch (error) {
       logger.error('Error updating user profile:', error);
+      throw error;
+    }
+  }
+
+  async updateUserRoleByEmail(email, role) {
+    try {
+      const users = await this.getMockUsers();
+      const userIndex = users.findIndex(user => user.email === email);
+
+      if (userIndex === -1) {
+        throw new Error('User not found');
+      }
+
+      users[userIndex].role = role;
+      users[userIndex].updatedAt = new Date();
+
+      await this.storeMockUsers(users);
+      logger.info(`Role updated for user: ${email} -> ${role}`);
+
+      return users[userIndex];
+    } catch (error) {
+      logger.error('Error updating user role:', error);
       throw error;
     }
   }
