@@ -18,22 +18,60 @@ import {
   ShoppingCart,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { removeFromCart, updateQuantity } from '../../store/slices/cartSlice';
+import { cartAPI } from '../../services/api';
+import { setCart } from '../../store/slices/cartSlice';
+import toast from 'react-hot-toast';
 
 const CartDrawer = ({ open, onClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { items, totalAmount } = useSelector((state) => state.cart);
+  const { items, total } = useSelector((state) => state.cart);
 
-  const handleRemoveItem = (productId) => {
-    dispatch(removeFromCart(productId));
+  const refreshCart = async () => {
+    const response = await cartAPI.getCart();
+    dispatch(setCart(response.data.items || []));
   };
 
-  const handleUpdateQuantity = (productId, quantity) => {
-    if (quantity <= 0) {
-      dispatch(removeFromCart(productId));
-    } else {
-      dispatch(updateQuantity({ productId, quantity }));
+  const handleAuthError = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    dispatch(setCart([]));
+    onClose();
+    navigate('/login');
+  };
+
+  const handleRemoveItem = async (productId) => {
+    try {
+      await cartAPI.removeFromCart(productId);
+      await refreshCart();
+      toast.success('Item removed from cart');
+    } catch (e) {
+      const status = e?.response?.status;
+      if (status === 401 || status === 403) {
+        toast.error('Please login again');
+        handleAuthError();
+        return;
+      }
+      toast.error('Failed to remove item');
+    }
+  };
+
+  const handleUpdateQuantity = async (productId, quantity) => {
+    try {
+      if (quantity <= 0) {
+        await cartAPI.removeFromCart(productId);
+      } else {
+        await cartAPI.updateCartItem(productId, { quantity });
+      }
+      await refreshCart();
+    } catch (e) {
+      const status = e?.response?.status;
+      if (status === 401 || status === 403) {
+        toast.error('Please login again');
+        handleAuthError();
+        return;
+      }
+      toast.error('Failed to update cart');
     }
   };
 
@@ -169,7 +207,7 @@ const CartDrawer = ({ open, onClose }) => {
           <Box display="flex" justifyContent="space-between" mb={2}>
             <Typography variant="h6">Total:</Typography>
             <Typography variant="h6">
-              {formatPrice(totalAmount)}
+              {formatPrice(total)}
             </Typography>
           </Box>
 

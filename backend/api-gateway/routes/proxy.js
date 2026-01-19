@@ -17,6 +17,13 @@ const services = {
       '^/inventory': '/api/inventory'
     }
   },
+  cart: {
+    target: process.env.CART_SERVICE_URL || (inDocker ? 'http://cart-service:3007' : 'http://localhost:3007'),
+    changeOrigin: true,
+    pathRewrite: {
+      '^/cart': '/api/cart'
+    }
+  },
   orders: {
     target: process.env.ORDER_SERVICE_URL || (inDocker ? 'http://order-service:3002' : 'http://localhost:3002'),
     changeOrigin: true,

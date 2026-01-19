@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL ||
+  (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : '');
 
 // Create axios instance
 const api = axios.create({
@@ -85,16 +87,22 @@ export const productsAPI = {
   getProducts: (params) => api.get('/api/products', { params }),
   getProduct: (id) => api.get(`/api/products/${id}`),
   getCategories: () => api.get('/api/categories'),
-  searchProducts: (params) => api.get('/search/products', { params }),
-  getSearchSuggestions: (query) => api.get('/search/suggestions', { params: { q: query } }),
-  getTrendingSearches: () => api.get('/search/trending'),
+  searchProducts: (params) => api.get('/api/search/products', { params }),
+  getSearchSuggestions: (query) => api.get('/api/search/suggestions', { params: { q: query } }),
+  getTrendingSearches: () => api.get('/api/search/trending'),
 };
 
 // Cart API
 export const cartAPI = {
   getCart: () => api.get('/api/cart'),
   addToCart: (item) => api.post('/api/cart', item),
-  updateCartItem: (itemId, quantity) => api.put(`/api/cart/${itemId}`, { quantity }),
+  updateCartItem: (itemId, quantityOrPayload) => {
+    const payload =
+      typeof quantityOrPayload === 'number'
+        ? { quantity: quantityOrPayload }
+        : (quantityOrPayload || {});
+    return api.put(`/api/cart/${itemId}`, payload);
+  },
   removeFromCart: (itemId) => api.delete(`/api/cart/${itemId}`),
   clearCart: () => api.delete('/api/cart'),
 };

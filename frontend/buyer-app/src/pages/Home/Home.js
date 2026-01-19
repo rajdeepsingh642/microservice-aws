@@ -34,13 +34,14 @@ import {
   Compare
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { productsAPI } from '../../services/api';
+import { cartAPI, productsAPI } from '../../services/api';
 import { addToWishlist } from '../../store/slices/wishlistSlice';
 import { addToCartStart, addToCartSuccess, addToCartFailure } from '../../store/slices/cartSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import ProductImage from '../../components/ProductImage/ProductImage';
 import { mockProducts } from '../../data/mockProducts';
+import { setCart } from '../../store/slices/cartSlice';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -193,26 +194,20 @@ const Home = () => {
     }
 
     dispatch(addToCartStart());
-    
-    try {
-      const cartItem = {
-        _id: product._id || product.id,
-        productId: product._id || product.id,
-        name: product.name,
-        price: product.discount ? product.price * (1 - product.discount / 100) : product.price,
-        originalPrice: product.price,
-        discount: product.discount,
-        image: product.images?.[0]?.url,
-        quantity: 1,
-        stock: product.stock || 10
-      };
-      
-      dispatch(addToCartSuccess(cartItem));
-      toast.success(`${product.name} added to cart!`);
-    } catch (error) {
-      dispatch(addToCartFailure(error.message));
-      toast.error('Failed to add to cart');
-    }
+
+    (async () => {
+      try {
+        const productId = product._id || product.id;
+        await cartAPI.addToCart({ productId, quantity: 1 });
+        const response = await cartAPI.getCart();
+        dispatch(setCart(response.data.items || []));
+        dispatch(addToCartSuccess({ productId, quantity: 1 }));
+        toast.success(`${product.name} added to cart!`);
+      } catch (error) {
+        dispatch(addToCartFailure(error.message));
+        toast.error('Failed to add to cart');
+      }
+    })();
   };
 
   const handleAddToWishlist = (product, e) => {

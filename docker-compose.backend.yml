@@ -101,6 +101,7 @@ services:
       RABBITMQ_URL: amqp://admin:password@rabbitmq:5672
       ELASTICSEARCH_URL: http://elasticsearch:9200
       PRODUCT_SERVICE_URL: http://product-service:3001
+      CART_SERVICE_URL: http://cart-service:3007
       ORDER_SERVICE_URL: http://order-service:3002
       PAYMENT_SERVICE_URL: http://payment-service:3003
       REVIEW_SERVICE_URL: http://review-service:3004
@@ -120,6 +121,39 @@ services:
       - ./shared:/app/shared
       - ./shared/node_modules:/app/shared/node_modules
       - ./backend/api-gateway:/app
+      - /app/node_modules
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  cart-service:
+    build:
+      context: ./backend/cart-service
+      dockerfile: Dockerfile
+    container_name: cart-service
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DOCKER: 'true'
+      PORT: 3007
+      MONGODB_URI: mongodb://admin:password@mongodb:27017/ecommerce?authSource=admin
+      PRODUCT_SERVICE_URL: http://product-service:3001
+      JWT_SECRET: your-super-secret-jwt-key-here
+      SERVICE_API_KEY: your-internal-service-api-key
+    ports:
+      - "3008:3007"
+    depends_on:
+      - mongodb
+      - product-service
+    volumes:
+      - ./shared:/app/shared
+      - ./shared/node_modules:/app/shared/node_modules
+      - ./backend/cart-service:/app
       - /app/node_modules
     networks:
       - ecommerce-network

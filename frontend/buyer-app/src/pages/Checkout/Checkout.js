@@ -24,7 +24,7 @@ import {
 } from '@mui/material';
 import { CreditCard, LocalShipping, Payment } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { ordersAPI, paymentsAPI } from '../../services/api';
+import { cartAPI, ordersAPI, paymentsAPI } from '../../services/api';
 import { clearCart } from '../../store/slices/cartSlice';
 import toast from 'react-hot-toast';
 
@@ -166,6 +166,11 @@ const Checkout = () => {
 
       await paymentsAPI.createPayment(paymentPayload);
 
+      try {
+        await cartAPI.clearCart();
+      } catch (e) {
+        // ignore backend cart clear failures; we'll still clear client cart
+      }
       dispatch(clearCart());
       toast.success('Order placed successfully!');
       navigate('/orders');

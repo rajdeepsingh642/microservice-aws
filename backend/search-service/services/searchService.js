@@ -11,26 +11,33 @@ class SearchService {
   }
 
   async initializeElasticsearch() {
-    try {
-      if (process.env.ELASTICSEARCH_URL) {
+    // Elasticsearch is optional in dev; service should still boot without it.
+    if (process.env.ELASTICSEARCH_URL) {
+      try {
         this.elasticsearchClient = new Client({
           node: process.env.ELASTICSEARCH_URL
         });
-        
+
         await this.createIndexes();
         logger.info('Elasticsearch initialized successfully');
+      } catch (error) {
+        this.elasticsearchClient = null;
+        logger.warn('Elasticsearch not available; continuing without it', {
+          error: error?.message
+        });
       }
+    }
 
-      // Initialize RabbitMQ
-      if (process.env.RABBITMQ_URL) {
+    // Initialize RabbitMQ
+    if (process.env.RABBITMQ_URL) {
+      try {
         this.rabbitmqConnection = await amqp.connect(process.env.RABBITMQ_URL);
         this.rabbitmqChannel = await this.rabbitmqConnection.createChannel();
         await this.setupQueues();
         await this.startConsumer();
+      } catch (error) {
+        logger.error('Error initializing RabbitMQ for search service:', error);
       }
-    } catch (error) {
-      logger.error('Error initializing search service:', error);
-      throw error;
     }
   }
 
